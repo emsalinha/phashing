@@ -1,0 +1,9 @@
+hash_size=11
+high_freq_factor=6
+aantal hashes=4612
+tijd=138.6710114479065
+tijd_per_hash=0.03
+
+totaal_verwachte_hashes=12150000
+totaal_verwachte_runtijd=365000
+totaal_verwachte_runtijd_uren=100
