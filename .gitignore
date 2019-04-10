@@ -1,4 +1,6 @@
-dataset/
+dataset/trailers/
+dataset/films/
+downloaden/gedownloade-trailers/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

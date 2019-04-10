@@ -8,7 +8,10 @@ import pandas as pd
 import time
 start = time.time()
 
-def get_hash(frame_path, hash_size = 11, high_freq_factor=6):
+hash_size = 15
+high_freq_factor = 4
+
+def get_hash(frame_path, hash_size, high_freq_factor):
     im = Image.open(frame_path)
     img_size = hash_size * high_freq_factor
     image = im.convert("L").resize((img_size, img_size), Image.ANTIALIAS)
@@ -21,14 +24,14 @@ def get_hash(frame_path, hash_size = 11, high_freq_factor=6):
     return hash, im
 
 
-video = 'trailer_1'
-multiple_videos = True
+video = 'film_1'
+multiple_videos = False
 
 if 'trailer' in video:
-    wd = '/home/emsala/Documenten/Studie/These/dataset-maken/dataset/trailers'
+    wd = '/home/emsala/Documenten/Studie/These/phashing/dataset/trailers'
     video_wd = wd + '/' + video + '/' + 'trailer'
 else:
-    wd = '/home/emsala/Documenten/Studie/These/dataset-maken/dataset/films'
+    wd = '/home/emsala/Documenten/Studie/These/phashing/dataset/films'
     video_wd = wd + '/' + video + '/' + 'film'
 
 frames_wd = wd + '/' + video + '/' + 'frames'
@@ -38,6 +41,9 @@ videos = glob.glob(video_wd + '/*')
 videos = [video.split('/')[-1] for video in videos if video.endswith('.py') == False]
 video_names = [video[0:6] for video in videos]
 
+
+print(video_wd)
+print(glob.glob(video_wd + '/*'))
 print(video_names)
 
 
@@ -48,7 +54,7 @@ for video_name in video_names:
     else:
         path = frames_wd
 
-    video_frames = glob.glob(path + '/*')
+    video_frames = sorted(glob.glob(path + '/*'))
     hashes = []
     ims = []
     frame_names = []
@@ -56,21 +62,19 @@ for video_name in video_names:
         frame_name = video_frame.split('/')[-1]
         frame_names.append(frame_name)
 
-        hash, im = get_hash(video_frame)
+        hash, im = get_hash(video_frame, hash_size, high_freq_factor)
         hashes.append(hash)
-        ims.append(im)
 
     data = {'video_name': [video_name] * len(hashes),
             'frame': frame_names,
-            'hash': hashes,
-            'im': ims}
+            'hash': hashes}
     df = pd.DataFrame.from_dict(data)
     if multiple_videos:
         os.mkdir(hashes_wd + '/' + '{}-hashes'.format(video_name))
         os.chdir(hashes_wd + '/' + '{}-hashes'.format(video_name))
     else:
         os.chdir(hashes_wd)
-    df.to_csv('{}-hashes.csv'.format(video_name))
+    df.to_csv('{}-hashes-{}-{}.csv'.format(video_name,hash_size, high_freq_factor))
 
 
 

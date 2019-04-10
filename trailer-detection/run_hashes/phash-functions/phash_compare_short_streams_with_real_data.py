@@ -17,10 +17,6 @@ selection_filepathnamelist_1, movie_hashes_1, movie_hashes_simple_1 = get_video_
 
 selection_filepathnamelist_lists , movie_hashes_lists , movie_hashes_simple_lists = get_video_hash_list_stream(path_video_stream, selection_frequency,  selection='chunks', chunksize = 10)
 
-for movie_hashes in movie_hashes_lists:
-    distans, path = fastdtw(movie_hashes, movie_hashes_1, radius = 1000, dist=distancemetric)
-    print(distans, path)
-
 
 #
 # import matplotlib.pyplot as plt
