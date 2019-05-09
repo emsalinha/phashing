@@ -2,7 +2,7 @@ import glob
 import os
 import time
 import argparse
-from create_dataset.extract_frames.extract_frames import extract
+from extract_frames import extract
 import csv
 
 
@@ -15,26 +15,28 @@ def extract_frames(config):
 
 
 	drive_path = home + 'movie-drive/'
-	movie_paths = glob.glob(drive_path + 'movies/*')
-
-	results = csv.writer(open(drive_path + 'results/speed_extracting.csv', 'w'))
-	speed = {}
-
+	movie_paths = sorted(glob.glob(drive_path + 'movies/*'))
+	frame_paths = glob.glob(drive_path + 'frames/*')
+	N = len(movie_paths) - len(frame_paths)
+        
 	for movie_path in movie_paths:
 		start = time.time()
+		print(movie_path, ' {} of {} movies'.format(movie_paths.index(movie_path), N))
 
 		movie_name = movie_path.split('/')[-1].split('.')[0]
 		frames_path = drive_path + 'frames/' + movie_name + '/'
 		try:
 			os.mkdir(frames_path)
-		except:
-			pass
+		except:\
+			continue
 
 		n_frames = extract(movie_path, frames_path, 6)
 
 		end = time.time()
 
 		duration = (end - start)
+		print('{} frames in {} time'.format(n_frames, duration))
+		
 		speed[duration] = n_frames
 		for key, val in speed.items():
 			results.writerow([key, val])
@@ -43,6 +45,6 @@ def extract_frames(config):
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
+	parser.add_argument('--VM', type=bool, default=True, help='Running on VM or not')
 	config = parser.parse_args()
 	extract_frames(config)

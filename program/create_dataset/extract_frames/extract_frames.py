@@ -1,6 +1,6 @@
 import cv2
 import os
-from create_dataset.extract_frames.zero_pad_nr import zero_pad_nr
+from zero_pad_nr import zero_pad_nr
 
 
 def extract(movie_path, write_path='', len_number=6):
