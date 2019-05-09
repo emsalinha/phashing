@@ -18,6 +18,8 @@ def extract_frames(config):
 	movie_paths = sorted(glob.glob(drive_path + 'movies/*'))
 	frame_paths = glob.glob(drive_path + 'frames/*')
 	N = len(movie_paths) - len(frame_paths)
+	speed = {}
+	results = csv.writer(open(drive_path + 'results/speed_extracting.csv', 'w'))
         
 	for movie_path in movie_paths:
 		start = time.time()
@@ -27,7 +29,7 @@ def extract_frames(config):
 		frames_path = drive_path + 'frames/' + movie_name + '/'
 		try:
 			os.mkdir(frames_path)
-		except:\
+		except:
 			continue
 
 		n_frames = extract(movie_path, frames_path, 6)
