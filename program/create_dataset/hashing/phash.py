@@ -1,3 +1,6 @@
+import glob
+from pil import Image
+
 
 def get_hash(path_film , hash_size = 8, high_freq_factor=4):
     """create a hash for each frame and then calculate the average hash"""
