@@ -3,6 +3,7 @@ dataset/films/
 downloaden/gedownloade-trailers/
 literature/
 results/*
+**/nohup.out
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
