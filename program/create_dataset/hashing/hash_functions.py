@@ -22,6 +22,7 @@ def DCT_hash(frame_path, hash_params = None):
     med = np.median(dctlowfreq)
     diff = dctlowfreq > med
     hash = [1 if x == True else 0 for x in diff.flatten()]
+    hash = np.array(hash)
     return hash
 
 def AVG_hash(frame_path, hash_params = None):
@@ -42,7 +43,10 @@ def AVG_hash(frame_path, hash_params = None):
     pixels = np.asarray(image)
     avg = pixels.mean()
     diff = pixels > avg
-    hash = [1 if x == True else 0 for x in diff] #TODO: check if flattening is needed
+    hash = [1 if x == True else 0 for x in diff.flatten()]
+    hash = np.array(hash)
     return hash
 
 
+setattr(DCT_hash, 'name', 'DCT')
+setattr(AVG_hash, 'name', 'AVG')

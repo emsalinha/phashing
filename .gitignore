@@ -4,6 +4,7 @@ downloaden/gedownloade-trailers/
 literature/
 results/*
 **/nohup.out
+**/kladblok.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
