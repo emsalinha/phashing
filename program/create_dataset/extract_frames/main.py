@@ -23,7 +23,6 @@ def extract_frames(config):
         
 	for movie_path in movie_paths:
 		start = time.time()
-		print(movie_path, ' {} of {} movies'.format(movie_paths.index(movie_path), N))
 
 		movie_name = movie_path.split('/')[-1].split('.')[0]
 		frames_path = drive_path + 'frames/' + movie_name + '/'
@@ -31,6 +30,8 @@ def extract_frames(config):
 			os.mkdir(frames_path)
 		except:
 			continue
+
+		print('exract {}, {} of {} movies'.format(movie_path, movie_paths.index(movie_path), N))
 
 		n_frames = extract(movie_path, frames_path, 6)
 
@@ -42,8 +43,6 @@ def extract_frames(config):
 		speed[duration] = n_frames
 		for key, val in speed.items():
 			results.writerow([key, val])
-
-	results.close()
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
