@@ -5,6 +5,8 @@ import argparse
 from create_dataset.hashing.hash_and_write import hash_and_write
 from create_dataset.hashing.hash_functions import DCT_hash, AVG_hash
 
+#TODO: implement augmentation
+#TODO: check whether produced speed csv and produced hdf5 file is correct
 
 def main_hash_and_write(config):
 
