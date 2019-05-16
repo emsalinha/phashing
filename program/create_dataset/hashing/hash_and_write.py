@@ -28,9 +28,8 @@ def hash_and_write(movie_name, frame_paths, hash_method, hash_params, fps = 25):
     subsubgroup_name = hash_params['hash_size']
     dataset_name = '{}/{}/{}'.format(group_name, subgroup_name, subsubgroup_name)
 
-    hdf5_store = h5py.File('hashes_{}.hdf5'.format(movie_name), 'a')
-
     try:
+        hdf5_store = h5py.File('hashes_{}.hdf5'.format(movie_name), 'a')
         phashes = hdf5_store.create_dataset(dataset_name, phashes.shape, compression='gzip')
 
         for i in range(0, n_frames):
