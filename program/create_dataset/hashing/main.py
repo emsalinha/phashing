@@ -19,7 +19,7 @@ def main_hash_and_write(config):
 
 	speed_csv = open(home + 'results/speed_hashing.csv', 'w')
 
-	frame_dirs = glob.glob(home + 'frames/*')
+	frame_dirs = sorted(glob.glob(home + 'frames/*'))
 
 
 	hash_params = {
@@ -36,7 +36,7 @@ def main_hash_and_write(config):
 
 	for frame_dir in frame_dirs:
 
-		frame_paths = glob.glob(frame_dir + '/*')
+		frame_paths = sorted(glob.glob(frame_dir + '/*'))
 		movie_name = frame_paths[0].split('/')[-2]
 		hashes_wd = home + 'hashes/' + movie_name
 
