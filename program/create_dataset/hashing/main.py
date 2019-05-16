@@ -53,8 +53,7 @@ def main_hash_and_write(config):
 				speed_per_hash = hash_and_write(movie_name, frame_paths, hash_method, hash_params)
 
 				hash_name = '{}_{}'.format(hash_method.__name__, hash_size)
-
-				speed_csv.write('{}: {}\n'.format(hash_name, speed_per_hash))
+				speed_csv.write('{}: {}: {}\n'.format(movie_name, hash_name, speed_per_hash))
 
 	speed_csv.close()
 
