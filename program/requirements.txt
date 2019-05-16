@@ -1,0 +1,6 @@
+scipy
+Pillow
+numpy
+matplotlib
+h5py
+
