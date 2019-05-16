@@ -5,7 +5,8 @@ literature/
 results/*
 **/nohup.out
 **/kladblok.py
-**/__pycache__/
+**/__pycache__
+**/*.hdf5
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
