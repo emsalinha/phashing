@@ -1,4 +1,5 @@
-from get_distances.traverse_datasets import traverse_datasets
+from traverse_datasets import traverse_datasets
+from read_distances import read_distances
 import h5py
 import argparse
 import numpy as np
@@ -40,17 +41,8 @@ def histograms_occurences(histogram_store, distances_store, datasets, len_traile
         histogram_store.create_dataset(ds_s, data=hist_sim, compression='gzip')
         histogram_store.create_dataset(ds_d, data=hist_dissim, compression='gzip')
 
-def histogram_occurences(distances_store, dataset, len_trailer, min_distance = True):
-    distances_matrix = distances_store[dataset][:]
-
-    if min_distance:
-        distances = np.amin(distances_matrix, axis=1)
-        similar = distances[:len_trailer]
-        dissimilar = distances[len_trailer:]
-    else:
-        distances = distances_matrix
-        similar = distances[:len_trailer, :]
-        dissimilar = distances[len_trailer:, :]
+def histogram_occurences(distances_store, dataset, len_trailer):
+    similar, dissimilar = read_distances(distances_store, dataset, len_trailer, min_distance = True)
 
     hist_sim = np.histogram(similar, range=(0,1))
     values = hist_sim[0]
