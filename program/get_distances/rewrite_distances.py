@@ -15,7 +15,7 @@ def rewrite_distances(config):
 
     distance_dirs = sorted(glob.glob(home + 'distances/*'))
     distances_paths = [glob.glob(distance_dir + '/*')[0] for distance_dir in distance_dirs]
-    init_datasets = [d for d in traverse_datasets(distances_paths[-1])]
+    init_datasets = [d for d in traverse_datasets(distances_paths[-5])]
 
     new_distances_dir = home + 'distances/all_movies/'
     os.mkdir(new_distances_dir)
@@ -32,7 +32,7 @@ def rewrite_distances(config):
         dataset_names = [d for d in traverse_datasets(distances_path)]
 
         for dataset_name in dataset_names:
-            distances = distances_store[dataset_name][:].flatten()
+            distances = np.amin(distances_store[dataset_name][:], axis=1).flatten()
             dataset = distances_all_store[dataset_name]
             new_shape = dataset.shape[0] + distances.shape[0]
             dataset.resize(new_shape, axis=0)
