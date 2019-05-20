@@ -1,6 +1,7 @@
 import argparse
 import os
 import glob
+import numpy as np
 
 
 def get_data_to_plot(config):
@@ -21,7 +22,7 @@ def get_data_to_plot(config):
     df_min_max = get_min_max(distance_paths, config)
     df_min_max.to_pickle(result_dir + 'df_min_max.pkl')
 
-    thresholds = range(0, 1, 0.1)
+    thresholds = np.arange(0, 1, 0.1)
     for threshold in thresholds:
         df_f1_score_data = get_f1_score_data(distance_paths, threshold, config)
         df_f1_score_data.to_pickle(result_dir + 'df_f1_{}.pkl'.format(threshold))

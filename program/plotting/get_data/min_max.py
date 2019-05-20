@@ -8,7 +8,7 @@ from traverse_datasets import traverse_datasets
 
 def get_min_max(paths, config = None):
 
-    df_original = pd.DataFrame
+    df_original = pd.DataFrame()
     for path in paths:
         df = min_max_distances(path, config)
         df_original = pd.concat([df_original, df])
@@ -32,7 +32,7 @@ def min_max_distances(distances_path, config = None):
     distances_store = h5py.File(distances_path, 'a')
     datasets = [d for d in traverse_datasets(distances_path)]
 
-    min_max_df = pd.DataFrame
+    min_max_df = pd.DataFrame()
     maxs_similar = []
     mins_similar = []
     maxs_dissimilar = []

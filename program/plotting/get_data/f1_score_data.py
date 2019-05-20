@@ -13,7 +13,7 @@ from traverse_datasets import traverse_datasets
 
 def get_f1_score_data(paths, threshold, config = None):
 
-    df_original = pd.DataFrame
+    df_original = pd.DataFrame()
     for path in paths:
         df = f1_score_data(path, threshold, config)
         df_original = pd.concat([df_original, df])
@@ -36,7 +36,7 @@ def f1_score_data(distances_path, threshold, config = None):
     movie_name = distances_path.split('/')[-2]
     distances_store = h5py.File(distances_path, 'a')
     datasets = [d for d in traverse_datasets(distances_path)]
-    f1_score_df = pd.DataFrame
+    f1_score_df = pd.DataFrame()
     tns = []
     fps = []
     fns = []
@@ -44,7 +44,7 @@ def f1_score_data(distances_path, threshold, config = None):
 
     for dataset in datasets:
         distances = distances_store[dataset][:]
-        distances = distances.amin(dim=1)
+        distances = np.amin(distances, axis=1)
         y_pred = get_y_pred(distances, threshold)
         y_true = get_y_true(distances, len_trailer)
         cm = confusion_matrix(y_true, y_pred)
