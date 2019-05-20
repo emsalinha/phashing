@@ -22,8 +22,8 @@ def get_data_to_plot(config):
 
     distance_dirs = sorted(glob.glob(home + 'distances/*'))
     distances_paths = [glob.glob(distance_dir + '/*')[0] for distance_dir in distance_dirs]
-    distances_all_movies = [dp for dp in distances_paths if 'all_movies' in distances_paths][0]
-    distances_paths = [dp for dp in distances_paths if 'all_movies' not in distances_paths]
+    distances_all_movies = [dp for dp in distances_paths if 'all_movies' in dp][0]
+    distances_paths = [dp for dp in distances_paths if 'all_movies' not in dp]
 
     result_dir = home + 'results/'
 
