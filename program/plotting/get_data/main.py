@@ -30,7 +30,8 @@ def get_data_to_plot(config):
         df_f1_score_data = get_f1_score_data(distances_paths, threshold, config)
         df_f1_score_data.to_pickle(result_dir + 'df_f1_{}.pkl'.format(threshold))
 
-    write_hists_occurences(result_dir, distances_paths, config)
+    hist_dir = result_dir + 'histograms/'
+    write_hists_occurences(hist_dir, distances_paths, config)
 
 
 if __name__ == "__main__":
