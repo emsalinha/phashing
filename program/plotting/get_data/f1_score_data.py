@@ -4,9 +4,7 @@ import pandas as pd
 # from sklearn.metrics import f1_score as calc_f1
 # from sklearn.metrics import precision_score, recall_score
 from sklearn.metrics import confusion_matrix
-
 from traverse_datasets import traverse_datasets
-
 
 #TODO: take maximum of predictions per frame or all predictions above the threshold?
 #TODO: check for every threshold or pick one threshold? if so what thresholds ("no cherry picking") thresholds = range(0,1,0.1)
@@ -63,7 +61,6 @@ def f1_score_data(distances_path, threshold, config = None):
     f1_score_df['tp'] = tps
 
     return f1_score_df
-
 
 
 def get_y_pred(distances, threshold):

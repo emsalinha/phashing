@@ -25,10 +25,9 @@ def get_distances_and_write(config):
         distances_wd = home + 'distances/' + movie_name
 
         try:
-            os.chdir(distances_wd)
+            os.mk(distances_wd)
         except:
-            os.mkdir(distances_wd)
-            os.chdir(distances_wd)
+            continue
 
         distances_store = h5py.File('distances_{}.hdf5'.format(movie_name), 'a')
 
