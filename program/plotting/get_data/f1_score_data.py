@@ -5,7 +5,7 @@ import pandas as pd
 # from sklearn.metrics import precision_score, recall_score
 from sklearn.metrics import confusion_matrix
 
-from get_distances.traverse_datasets import traverse_datasets
+from traverse_datasets import traverse_datasets
 
 
 #TODO: take maximum of predictions per frame or all predictions above the threshold?

@@ -2,7 +2,7 @@ import numpy as np
 import h5py
 import os
 import pandas as pd
-from get_distances.traverse_datasets import traverse_datasets
+from traverse_datasets import traverse_datasets
 
 #TODO: what to do about black frames ruining the minimum distance?
 
