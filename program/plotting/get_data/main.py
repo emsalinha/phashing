@@ -35,8 +35,9 @@ def get_data_to_plot(config):
     hist_dir = result_dir + 'histograms/'
     write_hists_occurences(hist_dir, distances_paths, config)
 
-    significance_results = get_significances(distances_paths[0], config)
-    significance_results.to_pickle(result_dir + 'significance_results.pkl')
+    df_bonferroni, df_anova = get_significances(distances_paths[0], config)
+    df_bonferroni.to_pickle(result_dir + 'bonferroni_results.pkl')
+    df_anova.to_pickle(result_dir + 'anova_results.pkl')
 
 
 if __name__ == "__main__":

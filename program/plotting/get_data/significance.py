@@ -39,11 +39,11 @@ def get_significances(distances_all_movies_path, config):
     f_value, p_value = stats.f_oneway(data1, data2, data3, data4, data5, data6)
 
 
-    print('One-way ANOVA')
-    print('=============')
-
-    print('F value:', f_value)
-    print('P value:', p_value, '\n')
+    # print('One-way ANOVA')
+    # print('=============')
+    #
+    # print('F value:', f_value)
+    # print('P value:', p_value, '\n')
 
     data = np.hstack((data1, data2, data3, data4, data5, data6))
     names = np.hstack((names1, names2, names3, names4, names5, names6))
@@ -51,7 +51,10 @@ def get_significances(distances_all_movies_path, config):
     result = mc.tukeyhsd()
 
     df_result = pd.DataFrame(data=result._results_table.data[1:], columns=result._results_table.data[0])
-    return df_result
+
+    df_anova = pd.DataFrame(data = [f_value, p_value], columns = ['f, p'])
+
+    return df_result, df_anova
 
 
 
