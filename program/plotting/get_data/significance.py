@@ -1,100 +1,64 @@
-import numpy as np
 import h5py
 import os
-import pandas as pd
+from scipy import stats
+import argparse
 import numpy as np
-from scipy import stats
-from statsmodels.stats.multicomp import pairwise_tukeyhsd
+import pandas as pd
+
 from statsmodels.stats.multicomp import MultiComparison
-
-from traverse_datasets import traverse_datasets
-from read_distances import read_distances
-from scipy import stats
 from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
-f_value, p_value = stats.f_oneway(data1, data2, data3, data4, ...)
-result = pairwise_tukeyhsd(Data, Group)
+
+def get_significances(distances_all_movies_path, config):
+
+    if config.VM:
+        home = '/movie-drive/'
+        from traverse_datasets import traverse_datasets
+
+    else:
+        home = os.getenv('HOME') + '/movie-drive/'
+        from plotting.get_data.traverse_datasets import traverse_datasets
 
 
-data = np.rec.array([
-    ('Pat', 5),
-    ('Pat', 4),
-    ('Pat', 4),
-    ('Pat', 3),
-    ('Pat', 9),
-    ('Pat', 4),
-    ('Jack', 4),
-    ('Jack', 8),
-    ('Jack', 7),
-    ('Jack', 5),
-    ('Jack', 1),
-    ('Jack', 5),
-    ('Alex', 9),
-    ('Alex', 8),
-    ('Alex', 8),
-    ('Alex', 10),
-    ('Alex', 5),
-    ('Alex', 10)], dtype=[('Archer', '|U5'), ('Score', '<i8')])
+    distances_store = h5py.File(distances_all_movies_path, 'a')
+    datasets = [d for d in traverse_datasets(distances_all_movies_path) if 'unaugmented' in d]
+
+    data1 = distances_store[datasets[0]][:]
+    names1 = np.array([datasets[0]] * data1.shape[0])
+    data2 = distances_store[datasets[1]][:]
+    names2 = np.array([datasets[1]] * data2.shape[0])
+    data3 = distances_store[datasets[2]][:]
+    names3 = np.array([datasets[2]] * data3.shape[0])
+    data4 = distances_store[datasets[3]][:]
+    names4 = np.array([datasets[3]] * data4.shape[0])
+    data5 = distances_store[datasets[4]][:]
+    names5 = np.array([datasets[4]] * data5.shape[0])
+    data6 = distances_store[datasets[5]][:]
+    names6 = np.array([datasets[5]] * data6.shape[0])
+
+    f_value, p_value = stats.f_oneway(data1, data2, data3, data4, data5, data6)
 
 
-print(data)
-print(data.shape)
+    print('One-way ANOVA')
+    print('=============')
 
-f, p = stats.f_oneway(data[data['Archer'] == 'Pat'].Score,
-                      data[data['Archer'] == 'Jack'].Score,
-                      data[data['Archer'] == 'Alex'].Score)
+    print('F value:', f_value)
+    print('P value:', p_value, '\n')
 
-print('One-way ANOVA')
-print('=============')
+    data = np.hstack((data1, data2, data3, data4, data5, data6))
+    names = np.hstack((names1, names2, names3, names4, names5, names6))
+    mc = MultiComparison(data, names)
+    result = mc.tukeyhsd()
 
-print('F value:', f)
-print('P value:', p, '\n')
-
-mc = MultiComparison(data['Score'], data['Archer'])
-result = mc.tukeyhsd()
-
-print(result)
-print(mc.groupsunique)
-
-def get_significance_data(distances_path):
-
-    # movie_name = distances_path.split('/')[-2]
-
-    distances_store = h5py.File(distances_path, 'a')
-    datasets = [d for d in traverse_datasets(distances_path)]
-
-    dist_avg_4 = np.array()
-    dist_avg_6 = np.array()
-    dist_avg_10
-
-    for dataset in datasets:
-        distances_matrix = distances_store[dataset][:]
+    df_result = pd.DataFrame(data=result._results_table.data[1:], columns=result._results_table.data[0])
+    return df_result
 
 
-    kruskall_wallis_df['hash_type'] = datasets
-    kruskall_wallis_df['max_similar'] = maxs_similar
-    kruskall_wallis_df['min_similar'] = mins_similar
-    kruskall_wallis_df['max_dissimilar'] = maxs_dissimilar
-    kruskall_wallis_df['min_dissimilar'] = mins_dissimilar
-    movie_names = [movie_name] * len(datasets)
-    kruskall_wallis_df['movie_name'] = movie_names
 
-    return kruskall_wallis_df
-
-
-def histogram_occurences(distances_store, dataset, len_trailer, min_distance = False):
-
-    similar, dissimilar = read_distances(distances_store, dataset, len_trailer, min_distance=False)
-
-
-    hist_sim = np.histogram(similar, range=(0,1))
-    values = hist_sim[0]
-    bins = hist_sim[1][:-1]
-    hist_sim = np.vstack((values, bins))
-
-    hist_dissim = np.histogram(dissimilar, range=(0,1))
-    values = hist_dissim[0]
-    bins = hist_dissim[1][:-1]
-    hist_dissim = np.vstack((values, bins))
-
-    return hist_sim, hist_dissim
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
+    parser.add_argument('--trailer_length', type=int, default=5, help='trailer length in minutes')
+    config = parser.parse_args()
+    path = '/home/emsala/movie-drive/distances/all_movies/distances_all_movies.hdf5'
+    get_significances(path, config)

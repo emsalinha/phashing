@@ -15,7 +15,7 @@ def rewrite_distances(config):
 
     distance_dirs = sorted(glob.glob(home + 'distances/*'))
     distances_paths = [glob.glob(distance_dir + '/*')[0] for distance_dir in distance_dirs]
-    init_datasets = [d for d in traverse_datasets(distances_paths[-5])]
+    init_datasets = [d for d in traverse_datasets(distances_paths[-1])]
 
     new_distances_dir = home + 'distances/all_movies/'
     os.mkdir(new_distances_dir)

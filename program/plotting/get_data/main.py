@@ -12,11 +12,13 @@ def get_data_to_plot(config):
         from min_max import get_min_max
         from f1_score_data import get_f1_score_data
         from hist_occurences import write_hists_occurences
+        from significance import get_significances
     else:
         home = os.getenv('HOME') + '/movie-drive/'
         from plotting.get_data.min_max import get_min_max
         from plotting.get_data.f1_score_data import get_f1_score_data
         from plotting.get_data.hist_occurences import write_hists_occurences
+        from plotting.get_data.significance import get_significances
 
     distance_dirs = sorted(glob.glob(home + 'distances/*'))
     distances_paths = [glob.glob(distance_dir + '/*')[0] for distance_dir in distance_dirs]
@@ -32,6 +34,9 @@ def get_data_to_plot(config):
 
     hist_dir = result_dir + 'histograms/'
     write_hists_occurences(hist_dir, distances_paths, config)
+
+    significance_results = get_significances(distances_paths[0], config)
+    significance_results.to_pickle(result_dir + 'significance_results.pkl')
 
 
 if __name__ == "__main__":
