@@ -22,6 +22,9 @@ def get_data_to_plot(config):
 
     distance_dirs = sorted(glob.glob(home + 'distances/*'))
     distances_paths = [glob.glob(distance_dir + '/*')[0] for distance_dir in distance_dirs]
+    distances_all_movies = distances_paths[0]
+    distances_paths = distances_paths[1:]
+
     result_dir = home + 'results/'
 
     df_min_max = get_min_max(distances_paths, config)
@@ -35,7 +38,7 @@ def get_data_to_plot(config):
     hist_dir = result_dir + 'histograms/'
     write_hists_occurences(hist_dir, distances_paths, config)
 
-    df_bonferroni, df_anova = get_significances(distances_paths[0], config)
+    df_bonferroni, df_anova = get_significances(distances_all_movies, config)
     df_bonferroni.to_pickle(result_dir + 'bonferroni_results.pkl')
     df_anova.to_pickle(result_dir + 'anova_results.pkl')
 
