@@ -45,7 +45,7 @@ def f1_score_data(distances_path, threshold, config):
         distances = distances_store[dataset][:]
         distances = np.amin(distances, axis=1)
         y_pred = get_y_pred(distances, threshold)
-        y_true = get_y_true(distances, len_trailer)
+        y_true = get_y_true(distances, n_frames_trailer)
         cm = confusion_matrix(y_true, y_pred)
         tn, fp, fn, tp = cm.ravel()
         tns.append(tn)
