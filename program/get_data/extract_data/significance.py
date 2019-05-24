@@ -8,17 +8,15 @@ import pandas as pd
 from statsmodels.stats.multicomp import MultiComparison
 from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
-
 def get_significances(distances_all_movies_path, config):
 
     if config.VM:
         home = '/movie-drive/'
-        from traverse_datasets import traverse_datasets
+        from utils.traverse_datasets import traverse_datasets
 
     else:
         home = os.getenv('HOME') + '/movie-drive/'
-        from plotting.get_data.traverse_datasets import traverse_datasets
-
+        from get_data.extract_data.utils.traverse_datasets import traverse_datasets
 
     distances_store = h5py.File(distances_all_movies_path, 'a')
     datasets = [d for d in traverse_datasets(distances_all_movies_path) if 'unaugmented' in d]

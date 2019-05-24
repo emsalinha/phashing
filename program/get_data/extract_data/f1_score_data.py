@@ -4,12 +4,11 @@ import pandas as pd
 # from sklearn.metrics import f1_score as calc_f1
 # from sklearn.metrics import precision_score, recall_score
 from sklearn.metrics import confusion_matrix
-from traverse_datasets import traverse_datasets
-
+import os
 #TODO: take maximum of predictions per frame or all predictions above the threshold?
 #TODO: check for every threshold or pick one threshold? if so what thresholds ("no cherry picking") thresholds = range(0,1,0.1)
 
-def get_f1_score_data(paths, threshold, config = None):
+def get_f1_score_data(paths, threshold, config):
 
     df_original = pd.DataFrame()
     for path in paths:
@@ -18,7 +17,7 @@ def get_f1_score_data(paths, threshold, config = None):
 
     return df_original
 
-def f1_score_data(distances_path, threshold, config = None):
+def f1_score_data(distances_path, threshold, config):
     """
     calculate fp, fn, tp, tn per movie per hashtype for a certain threshold
     :param distances_path: path to hdf5 file with distances
@@ -26,10 +25,12 @@ def f1_score_data(distances_path, threshold, config = None):
     :return: pandas dataframe: {moviename, hashtype, fp, fn, tp, tn}
     """
 
-    if config == None:
-        len_trailer = 1
+    if config.VM:
+        from utils.traverse_datasets import traverse_datasets
     else:
-        len_trailer = config.trailer_length * 5
+        from get_data.extract_data.utils.traverse_datasets import traverse_datasets
+
+    n_frames_trailer = config.trailer_length * 60
 
     movie_name = distances_path.split('/')[-2]
     distances_store = h5py.File(distances_path, 'a')

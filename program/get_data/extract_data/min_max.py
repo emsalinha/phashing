@@ -2,11 +2,10 @@ import numpy as np
 import h5py
 import os
 import pandas as pd
-from traverse_datasets import traverse_datasets
 
 #TODO: what to do about black frames ruining the minimum distance?
 
-def get_min_max(paths, config = None):
+def get_min_max(paths, config):
 
     df_original = pd.DataFrame()
     for path in paths:
@@ -15,7 +14,7 @@ def get_min_max(paths, config = None):
 
     return df_original
 
-def min_max_distances(distances_path, config = None):
+def min_max_distances(distances_path, config):
     """
     calculate min max distances per movie
     :param distances_path: path to hdf5 file with distances
@@ -23,10 +22,14 @@ def min_max_distances(distances_path, config = None):
     :return: pandas dataframe: {moviename, hashtype, max_s, min_s, max_ds, min_ds}
     """
 
-    if config == None:
-        len_trailer = 1
+    if config.VM:
+        home = '/movie-drive/'
+        from utils.traverse_datasets import traverse_datasets
     else:
-        len_trailer = config.trailer_length * 5
+        home = os.getenv('HOME') + '/movie-drive/'
+        from get_data.extract_data.utils.traverse_datasets import traverse_datasets
+
+    n_frames_trailer = config.trailer_length * 60
 
     movie_name = distances_path.split('/')[-2]
     distances_store = h5py.File(distances_path, 'a')
@@ -40,8 +43,8 @@ def min_max_distances(distances_path, config = None):
 
     for dataset in datasets:
         distances = distances_store[dataset][:]
-        similar = distances[:len_trailer,:]
-        dissimilar = distances[len_trailer:,]
+        similar = distances[:n_frames_trailer,:]
+        dissimilar = distances[n_frames_trailer:,]
         maxs_similar.append(np.amax(similar))
         mins_similar.append(np.amin(similar))
         maxs_dissimilar.append(np.amax(dissimilar))
