@@ -26,7 +26,7 @@ def get_data_to_plot(config):
     distances_all_movies_path = glob.glob(result_dir+'distances_all_movies/*')[0]
 
     df_min_max = get_min_max(distances_paths, config)
-    df_min_max.to_pickle(result_dir + 'df_min_max.pkl')
+    df_min_max.to_pickle(result_dir + 'min_max/' + 'df_min_max.pkl')
 
 
     df_f1_dir = result_dir + 'f1_scores/'

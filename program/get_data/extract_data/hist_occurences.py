@@ -43,8 +43,8 @@ def write_hists_occurences(hist_dir, distances_paths, config):
 
             ds_s = dataset + '/hist_similar'
             ds_d = dataset + '/hist_dissimilar'
-            histogram_store.create_dataset(ds_s, data=hist_sim, compression='gzip')
-            histogram_store.create_dataset(ds_d, data=hist_dissim, compression='gzip')
+            histogram_store.require_dataset(ds_s, data=hist_sim, compression='gzip')
+            histogram_store.require_dataset(ds_d, data=hist_dissim, compression='gzip')
 
 def histogram_occurences(similar, dissimilar):
 
