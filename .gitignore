@@ -3,6 +3,8 @@ dataset/films/
 downloaden/gedownloade-trailers/
 literature/
 results/*
+**/sample_frames
+**/notes
 **/nohup.out
 **/kladblok.py
 **/__pycache__
