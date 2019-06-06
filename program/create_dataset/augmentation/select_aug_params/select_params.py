@@ -8,7 +8,6 @@ from create_dataset.augmentation.select_aug_params.MSSIM.MSSIM import MultiScale
 from create_dataset.augmentation.select_aug_params.MSSIM.open_image import open_image
 
 
-
 def select_parameters(path, color, method):
     param_range = return_param_range(method)
     selected_parameters = {}

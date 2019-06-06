@@ -19,6 +19,7 @@ def return_augmenter(parameter, method):
     return augmenter
 
 def return_param_range(method):
+    param_range = []
     if method == 'subtract':
         param_range = range(-255, 0, 5)
     if method == 'add':

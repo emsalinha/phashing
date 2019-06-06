@@ -1,6 +1,10 @@
 #TODO: select 1 hash type to augment
 #TODO: get objective comparison hash type
 
+with open('filename.pickle', 'rb') as handle:
+  b = pickle.load(handle)
+
+
   if FLAGS.original_image is None or FLAGS.compared_image is None:
     print('\nUsage: python msssim.py --original_image=original.png --compared_image=distorted.png\n\n')
     return
