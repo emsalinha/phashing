@@ -24,7 +24,7 @@ def select_parameters(path, color, method):
             if ssim_const == i:
                 selected_parameters[i] = parameter
                 ssim_values.pop(ssim_values.index(i))
-                print(selected_parameters)
+                #print(selected_parameters)
 
         if len(ssim_values) < 1:
             break

@@ -1,34 +1,38 @@
 #TODO: select 1 hash type to augment
 #TODO: get objective comparison hash type
 
-with open('filename.pickle', 'rb') as handle:
-  b = pickle.load(handle)
+
+def main(config):
+
+  if config.VM:
+    from select_aug_params.MSSIM.MSSIM import MultiScaleSSIM
+    from select_aug_params.MSSIM.open_image import open_image
+    from select_aug_params.MSSIM.show_images import show_images
+    params_dir = '/movie-drive/results/'
 
 
-  if FLAGS.original_image is None or FLAGS.compared_image is None:
-    print('\nUsage: python msssim.py --original_image=original.png --compared_image=distorted.png\n\n')
-    return
+  else:
+    from create_dataset.augmentation.select_aug_params.MSSIM.show_images import show_images
+    from create_dataset.augmentation.select_aug_params.MSSIM.open_image import open_image
+    from create_dataset.augmentation.select_aug_params.MSSIM.MSSIM import MultiScaleSSIM
+    params_dir = '~/movie-drive/results/'
 
-  if not tf.gfile.Exists(FLAGS.original_image):
-    print('\nCannot find --original_image.\n')
-    return
+    
 
-  if not tf.gfile.Exists(FLAGS.compared_image):
-    print('\nCannot find --compared_image.\n')
-    return
+    sample_folder = '/home/emsala/Documenten/Studie/These/phashing/program/create_dataset/augmentation/sample_frames/sampled_frames/'
+    sample_paths = sorted(glob.glob(sample_folder + '*'))
+    n = 18
+    img_path = sample_paths[n]
 
-  with tf.gfile.FastGFile(FLAGS.original_image) as image_file:
-    img1_str = image_file.read()
-  with tf.gfile.FastGFile(FLAGS.compared_image) as image_file:
-    img2_str = image_file.read()
+  with open('filename.pickle', 'rb') as handle:
+    b = pickle.load(handle)
 
-  input_img = tf.placeholder(tf.string)
-  decoded_image = tf.expand_dims(tf.image.decode_png(input_img, channels=3), 0)
 
-  with tf.Session() as sess:
-    img1 = sess.run(decoded_image, feed_dict={input_img: img1_str})
-    img2 = sess.run(decoded_image, feed_dict={input_img: img2_str})
-
-  print(MultiScaleSSIM(img1, img2, max_val=255)
 
 def main(_):
+  if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
+    config = parser.parse_args()
+    main(config)
+
