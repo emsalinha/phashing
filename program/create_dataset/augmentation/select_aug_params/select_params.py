@@ -2,7 +2,6 @@ import glob
 from skimage.measure import compare_ssim as ssim
 
 from create_dataset.augmentation.select_aug_params.return_augmenter import return_augmenter, return_param_range
-from create_dataset.augmentation.select_aug_params.show_params import show_params
 
 from create_dataset.augmentation.select_aug_params.MSSIM.MSSIM import MultiScaleSSIM
 from create_dataset.augmentation.select_aug_params.MSSIM.open_image import open_image
@@ -40,4 +39,3 @@ if __name__ == '__main__':
     method = 'contrast'
 
     selected_parameters = select_parameters(sample_paths[n], color, method)
-    show_params(selected_parameters, sample_paths[n], color=color, method=method)
