@@ -28,14 +28,17 @@ def get_distances_and_write(config):
 
 
         movie_name = hash_file.split('/')[-2]
-        distances_wd = home + 'distances/' + movie_name
+        distances_wd = home + 'distances/' + movie_name +'/'
 
         try:
-            os.mk(distances_wd)
+            os.mkdir(distances_wd)
         except:
             continue
 
-        distances_store = h5py.File('distances_{}.hdf5'.format(movie_name), 'a')
+        if config.remove_black_hashes:
+            distances_store = h5py.File(distances_wd + 'clean_distances_{}.hdf5'.format(movie_name), 'a')
+        else:
+            distances_store = h5py.File(distances_wd + 'distances_{}.hdf5'.format(movie_name), 'a')
 
         hash_datasets = [dataset for dataset in traverse_datasets(hash_file)]
 
