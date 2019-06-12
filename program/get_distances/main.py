@@ -3,6 +3,12 @@ import glob
 import os
 from scipy.spatial.distance import cdist
 import h5py
+import numpy as np
+
+def remove_black_hashes(hashes):
+    hashes = hashes[~np.all(hashes == 0, axis=1)]
+    return hashes
+
 
 def get_distances_and_write(config):
 
@@ -37,6 +43,9 @@ def get_distances_and_write(config):
             if hash_dataset not in distances_store:
                 movie_hashes = hashes_store[hash_dataset][:]
                 trailer_hashes = hashes_store[hash_dataset][:config.trailer_length*60]
+                if config.remove_black_hashes:
+                    movie_hashes = remove_black_hashes(movie_hashes)
+                    trailer_hashes = remove_black_hashes(trailer_hashes)
                 distances = cdist(movie_hashes, trailer_hashes, 'hamming')
                 distances_store.create_dataset(hash_dataset, data=distances, compression='gzip')
 
@@ -45,5 +54,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
     parser.add_argument('--trailer_length', type=int, default=5, help='trailer length in minutes')
+    parser.add_argument('--remove_black_hashes', type=bool, default=True, help='remove hashes of black frames')
     config = parser.parse_args()
     get_distances_and_write(config)

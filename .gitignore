@@ -10,6 +10,7 @@ results/*
 **/__pycache__
 **/*.hdf5
 **/*.pickle
+*.pickle
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
