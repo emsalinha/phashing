@@ -2,13 +2,14 @@ import cv2
 import glob
 import argparse
 from PIL import Image
+import numpy as np
 
 def show_frames(config):
 
-    frame_paths = glob.glob(config.path)
-    for frame_path in frame_paths:
+    for frame_path in sorted(glob.glob(config.path)):
         frame = config.path.split('/')[-1]
         img = Image.open(frame_path)
+        img = np.asarray(img)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         cv2.imshow('{}'.format(frame), img)
