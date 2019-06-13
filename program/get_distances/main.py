@@ -35,10 +35,10 @@ def get_distances_and_write(config):
         try:
             os.mkdir(distances_wd)
         except:
-            continue
+            pass
 
         if config.remove_black_hashes:
-            distances_store = h5py.File(distances_wd + 'clean_distances_{}.hdf5'.format(movie_name), 'a')
+            distances_store = h5py.File(distances_wd + 'c_distances_{}.hdf5'.format(movie_name), 'a')
         else:
             distances_store = h5py.File(distances_wd + 'distances_{}.hdf5'.format(movie_name), 'a')
 
