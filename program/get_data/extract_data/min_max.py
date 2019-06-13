@@ -2,6 +2,8 @@ import numpy as np
 import h5py
 import os
 import pandas as pd
+import argparse
+import glob
 
 #TODO: what to do about black frames ruining the minimum distance?
 
@@ -31,6 +33,7 @@ def min_max_distances(distances_path, config):
 
     n_frames_trailer = config.trailer_length * 60
 
+
     movie_name = distances_path.split('/')[-2]
     distances_store = h5py.File(distances_path, 'a')
     datasets = [d for d in traverse_datasets(distances_path)]
@@ -43,8 +46,14 @@ def min_max_distances(distances_path, config):
 
     for dataset in datasets:
         distances = distances_store[dataset][:]
-        similar = distances[:n_frames_trailer,:]
-        dissimilar = distances[n_frames_trailer:,]
+        n_frames_trailer = distances.shape[1]
+        trailer = distances[:n_frames_trailer,:]
+        rest = distances[n_frames_trailer:,]
+        diagonal = np.eye(trailer.shape[0], dtype=bool)
+        dissimilar = trailer[~diagonal].reshape(diagonal.shape[0]-1, diagonal.shape[0])
+        dissimilar = np.vstack((dissimilar, rest))
+        similar = trailer[diagonal]
+
         maxs_similar.append(np.amax(similar))
         mins_similar.append(np.amin(similar))
         maxs_dissimilar.append(np.amax(dissimilar))
@@ -59,5 +68,19 @@ def min_max_distances(distances_path, config):
     min_max_df['movie_name'] = movie_names
 
     return min_max_df
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
+    parser.add_argument('--trailer_length', type=int, default=5, help='trailer length in minutes')
+    config = parser.parse_args()
+    home = os.getenv('HOME') + '/movie-drive/'
+    distance_dirs = sorted(glob.glob(home + 'results/distances/*'))
+    distances_paths = [glob.glob(distance_dir + '/*')[0] for distance_dir in distance_dirs]
+
+    min_max_distances(distances_paths[0], config)
+
+    #write_hists_occurences(result_dir, distances_paths, config)
 
 

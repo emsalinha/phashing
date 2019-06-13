@@ -30,6 +30,8 @@ def get_distances_and_write(config):
         movie_name = hash_file.split('/')[-2]
         distances_wd = home + 'distances/' + movie_name +'/'
 
+        trailer_length = config.trailer_length*60
+
         try:
             os.mkdir(distances_wd)
         except:
@@ -44,8 +46,8 @@ def get_distances_and_write(config):
 
         for hash_dataset in hash_datasets:
             if hash_dataset not in distances_store:
-                movie_hashes = hashes_store[hash_dataset][:]
-                trailer_hashes = hashes_store[hash_dataset][:config.trailer_length*60]
+                movie_hashes = hashes_store[hash_dataset][60:-300]
+                trailer_hashes = hashes_store[hash_dataset][60:trailer_length+60]
                 if config.remove_black_hashes:
                     movie_hashes = remove_black_hashes(movie_hashes)
                     trailer_hashes = remove_black_hashes(trailer_hashes)
