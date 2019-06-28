@@ -1,12 +1,9 @@
+import argparse
 import glob
 import os
-import csv
-import argparse
 
-#TODO: implement augmentation
-#TODO: check whether produced speed csv and produced hdf5 file is correct
 
-def main_hash_and_write(config):
+def main(config):
 
 	if config.VM:
 		home = '/movie-drive/'
@@ -17,10 +14,9 @@ def main_hash_and_write(config):
 		from create_dataset.hashing.hash_and_write import hash_and_write
 		from create_dataset.hashing.hash_functions import DCT_hash, AVG_hash
 
-	speed_csv = open(home + 'results/speed_hashing.csv', 'w')
+	speed_csv = open(home + 'results/speed_hashing_new.csv', 'w')
 
 	frame_dirs = sorted(glob.glob(home + 'frames/*'))
-
 
 	hash_params = {
 		'augmentation': False,
@@ -32,7 +28,6 @@ def main_hash_and_write(config):
 
 	hash_methods = [DCT_hash, AVG_hash]
 	hash_sizes = [4, 8, 12]
-
 
 	for frame_dir in frame_dirs:
 
@@ -62,4 +57,4 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
 	config = parser.parse_args()
-	main_hash_and_write(config)
+	main(config)

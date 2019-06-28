@@ -12,7 +12,10 @@ def save_params(img_paths, color, method):
     :return: dict with keys = ssim and values = mean and standard deviation of the parameters of all images
     """
     param_moments = {}
+    i = 0
     for img_path in img_paths:
+        print(i)
+        i += 1
         selected_parameters = select_parameters(img_path, color, method)
         for ssim, param in selected_parameters.items():
             if ssim in param_moments.keys():
@@ -36,14 +39,14 @@ def compare_params(method):
 
     return param_moments
 
-def main():
+def main(methods):
 
     sample_folder = '/home/emsala/Documenten/Studie/These/phashing/program/create_dataset/augmentation/sample_frames/sampled_frames/'
     img_paths = sorted(glob.glob(sample_folder + '*'))
 
     color = True
 
-    methods = ['add', 'gauss', 'compress', 'subtract_hsv', 'add_hsv', 'contrast', 'subtract']
+
 
     for method in methods:
         paths_params = save_params(img_paths, color, method)
@@ -58,4 +61,6 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    methods = ['add', 'gauss', 'compress', 'subtract_hsv', 'add_hsv', 'contrast', 'subtract']
+    methods = ['compress']
+    main(methods)

@@ -6,8 +6,8 @@ def return_augmenter(parameter, method):
         augmenter = iaa.Sequential([iaa.Add(parameter, True)])
     if method == 'add':
         augmenter = iaa.Sequential([iaa.Add(parameter, True)])
-    if method == 'gauss_neg' or method == 'gauss_pos':
-        augmenter = iaa.Sequential([iaa.AdditiveGaussianNoise(parameter, 1.5, True)])
+    if method == 'gauss':
+        augmenter = iaa.Sequential([iaa.AdditiveGaussianNoise(0, parameter, True)])
     if method == 'compress':
         augmenter = iaa.Sequential([iaa.JpegCompression(parameter)])
     if method == 'subtract_hsv':
@@ -17,6 +17,8 @@ def return_augmenter(parameter, method):
     if method == 'contrast':
         augmenter = iaa.Sequential(iaa.GammaContrast(parameter, False))
     return augmenter
+#
+# gauss = iaa.Sequential([iaa.AdditiveGaussianNoise(0, 20, True)]) #sigma determines maount of saltnpepper noise
 
 def return_param_range(method):
     param_range = []
@@ -24,13 +26,15 @@ def return_param_range(method):
         param_range = range(-255, 0, 5)
     if method == 'add':
         param_range = range(0, 255, 5)
+    if method == 'gauss':
+        param_range = range(0, 1000)
     if method == 'gauss_neg':
         param_range = range(-255, 0)
     if method == 'gauss_pos':
         param_range = range(0, 255)
     if method == 'compress':
         param_range = range(8000, 10000, 10)
-        param_range = [param/100 for param in param_range]
+        param_range = [float(param)/float(100) for param in param_range]
     if method == 'subtract_hsv':
         param_range = range(-255, 0, 1)
     if method == 'add_hsv':

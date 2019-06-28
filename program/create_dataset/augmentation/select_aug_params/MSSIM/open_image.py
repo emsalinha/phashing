@@ -3,14 +3,14 @@ import numpy as np
 import cv2
 
 
-def open_image(frame_path, hash_size=8, high_freq_factor=4, color=False, hash_method = 'DCT_hash'):
+def open_image(frame_path, hash_size=12, high_freq_factor=4, color=False, hash_method = 'DCT_hash'):
     if hash_method == 'DCT_hash':
         img_size = int(hash_size * high_freq_factor)
     elif hash_method == 'AVG_hash':
         img_size = hash_size
     else:
-        print('unknown hash_method')
-        img_size = 8
+        img_size = 500
+
     if color:
         image = color_test_image(frame_path, img_size)
     else:

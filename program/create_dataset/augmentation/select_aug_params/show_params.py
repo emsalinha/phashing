@@ -18,15 +18,14 @@ def show_params(selected_parameters, path, color, method=''):
         show_images(img, aug_img, MSSIM, color, method)
 
 
-def main():
+def main(n):
     sample_folder = '/home/emsala/Documenten/Studie/These/phashing/program/create_dataset/augmentation/sample_frames/sampled_frames/'
     sample_paths = sorted(glob.glob(sample_folder + '*'))
-    n = 18
     img_path = sample_paths[n]
 
     color = True
 
-    methods = ['add', 'gauss', 'compress', 'subtract_hsv', 'add_hsv', 'contrast', 'subtract']
+    methods = ['subtract_hsv']
 
     augment_params = {}
 
@@ -36,8 +35,7 @@ def main():
 
         show_params(selected_params, img_path,  color=color, method=method)
 
-    with open('augment_params.pickle', 'wb') as handle:
-        pickle.dump(augment_params, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
 
 if __name__ == "__main__":
-    main()
+    main(22)

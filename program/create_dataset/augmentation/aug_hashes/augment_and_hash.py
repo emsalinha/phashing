@@ -54,7 +54,7 @@ def main(image_paths, hash_methods, aug_methods, color=True):
 
                     hashes[ssid] = phashes_aug
 
-            with open('{}/{}_hashes.pickle'.format(hash_method.__name__, aug_method), 'wb') as handle:
+            with open('{}_12/{}_hashes.pickle'.format(hash_method.__name__, aug_method), 'wb') as handle:
                 pickle.dump(hashes, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
@@ -64,4 +64,8 @@ if __name__ == '__main__':
     image_paths = glob.glob('/home/emsala/Documenten/Studie/These/phashing/program/create_dataset/augmentation/sample_frames/sampled_frames/*')
     hash_methods = [DCT_hash, AVG_hash]
     #main(image_paths, hash_methods, aug_methods)
-    main(image_paths, [AVG_hash], ['add_hsv', 'subtract_hsv', 'add', 'gauss', 'compress', 'contrast', 'subtract'])
+    main(image_paths, [AVG_hash], ['gauss'])
+    main(image_paths, [DCT_hash], ['gauss'])
+
+    # main(image_paths, [AVG_hash], [None])
+    # main(image_paths, [DCT_hash], [None])

@@ -76,10 +76,12 @@ if __name__ == "__main__":
     parser.add_argument('--trailer_length', type=int, default=5, help='trailer length in minutes')
     config = parser.parse_args()
     home = os.getenv('HOME') + '/movie-drive/'
-    distance_dirs = sorted(glob.glob(home + 'results/distances/*'))
-    distances_paths = [glob.glob(distance_dir + '/*')[0] for distance_dir in distance_dirs]
+    distance_dirs = sorted(glob.glob(home + 'distances/*'))
+    distances_paths = [sorted(glob.glob(distance_dir + '/*'))[0] for distance_dir in distance_dirs]
+    print(distances_paths)
 
-    min_max_distances(distances_paths[0], config)
+    df_min_max = get_min_max(distances_paths, config)
+    df_min_max.to_pickle('df_min_max_.pkl')
 
     #write_hists_occurences(result_dir, distances_paths, config)
 

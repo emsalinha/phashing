@@ -1,4 +1,6 @@
 import h5py
+import numpy as np
+
 
 def traverse_datasets(hdf_file):
 
@@ -14,3 +16,11 @@ def traverse_datasets(hdf_file):
     with h5py.File(hdf_file, 'r') as f:
         for path, _ in h5py_dataset_iterator(f):
             yield path
+
+
+def read_distances(path, i):
+    hists = h5py.File(path, 'r')
+    datasets = []
+    for dataset in traverse_datasets(path):
+        datasets.append(dataset)
+    return datasets[i], np.array(hists[datasets[i]])

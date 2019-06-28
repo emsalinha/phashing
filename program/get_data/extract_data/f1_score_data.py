@@ -1,6 +1,8 @@
 import h5py
 import numpy as np
 import pandas as pd
+import argparse
+import glob
 # from sklearn.metrics import f1_score as calc_f1
 # from sklearn.metrics import precision_score, recall_score
 from sklearn.metrics import confusion_matrix
@@ -72,7 +74,7 @@ def get_y_pred(distances, threshold):
 
 def get_y_true(distances, len_trailer):
     n_frames = distances.shape[0]
-    y_true = [1] * len_trailer + [0] * (n_frames-len_trailer)
+    y_true = [0] * 60 + [1] * len_trailer + [0] * (n_frames-len_trailer-60)
     y_true = np.array(y_true)
     return y_true
 
@@ -82,4 +84,25 @@ def get_f1_score(cm):
     recall = tp / (tp + fn)
     f1_score = 2 * ((precision * recall)/(precision+recall))
     return f1_score
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
+    parser.add_argument('--trailer_length', type=int, default=5, help='trailer length in minutes')
+    config = parser.parse_args()
+    home = os.getenv('HOME') + '/movie-drive/'
+    result_dir = home + 'results/'
+    df_f1_dir = result_dir + 'f1_scores/'
+    distance_dirs = sorted(glob.glob(home + 'distances/*'))
+    distances_paths = [sorted(glob.glob(distance_dir + '/*'))[0] for distance_dir in distance_dirs]
+
+    thresholds = np.arange(0, 1, 0.025)
+    for threshold in thresholds:
+        df_f1_score_data = get_f1_score_data(distances_paths, threshold, config)
+        df_f1_score_data.to_pickle(df_f1_dir + 'df_f1_{}.pkl'.format(threshold))
+
+
+    #write_hists_occurences(result_dir, distances_paths, config)
+
 

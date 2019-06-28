@@ -49,7 +49,7 @@ def load_DCT_frame(frame_path, hash_size, high_freq_factor):
 def extract_params(method, hash_params):
     if method == 'DCT':
         if hash_params == None:
-            hash_size = 8
+            hash_size = 12
             high_freq_factor = 4
         else:
             hash_size = hash_params['hash_size']
@@ -58,7 +58,7 @@ def extract_params(method, hash_params):
 
     elif method == 'AVG':
         if hash_params == None:
-            hash_size = 8
+            hash_size = 12
             vertical = 0
             horizontal = 0
         else:
