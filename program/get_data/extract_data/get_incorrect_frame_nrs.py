@@ -2,9 +2,8 @@ import numpy as np
 import pickle
 import argparse
 import glob
+import os
 
-from get_data.extract_data.utils.traverse_datasets import read_distances
-from get_data.extract_data.utils.traverse_datasets import traverse_datasets
 
 def get_dissimilar(distances, fpm, fpt, len_trailer):
     dis_dist = distances[len_trailer:]
@@ -40,7 +39,7 @@ def get_datasets(file_path):
     ds_trailer_fns = [d for d in ds if d.endswith('trailer_fns')]
     return ds_distances, ds_movie_fns, ds_trailer_fns
 
-def save_incorrect_matches(distances_paths, len_trailer=5*60, min_distance=True, save=False):
+def save_incorrect_matches(distances_paths, len_trailer, home, min_distance=True, save=False):
 
     all_incorrect_matches = {}
 
@@ -68,22 +67,38 @@ def save_incorrect_matches(distances_paths, len_trailer=5*60, min_distance=True,
             all_incorrect_matches[hash_type][movie_name] = incorrect_matches
 
     if save:
-        with open('~/movie-drive/results/incorrect_matches.pickle', 'wb') as handle:
+        with open('{}results/incorrect_matches.pickle'.format(home), 'wb') as handle:
             pickle.dump(all_incorrect_matches, handle)
 
     return all_incorrect_matches
 
+def main(config):
+
+    if config.VM:
+        from utils.traverse_datasets import read_distances
+        from utils.traverse_datasets import traverse_datasets
+        len_trailer = config.len_trailer * 60
+        home = 'movie-drive/'
+
+    else:
+        from get_data.extract_data.utils.traverse_datasets import read_distances
+        from get_data.extract_data.utils.traverse_datasets import traverse_datasets
+        len_trailer = config.len_trailer
+        home = os.getenv('HOME') + '/movie-drive/'
+
+    distances_folders = home + 'results/distances'
+    distances_paths = [sorted(glob.glob(distances_folder + '/*'))[0] for distances_folder in distances_folders]
+
+    matches = save_incorrect_matches(distances_paths, len_trailer, home)
+
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     # parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
-    parser.add_argument('--trailer_length', type=int, default=5*60, help='trailer length in minutes')
+    parser.add_argument('--trailer_length', type=int, default=5, help='trailer length in minutes')
     # parser.add_argument('--rb', type=bool, default=False, help='remove hashes of black frames')
     # parser.add_argument('--rio', type=bool, default=False, help='remove intro and outro')
     config = parser.parse_args()
 
-
-    movies = sorted(glob.glob('/home/emsala/movie-drive/distances/*'))
-    distances_paths = [sorted(glob.glob(movie + '/*'))[0] for movie in movies]
-
-
-    matches = save_incorrect_matches(distances_paths, len_trailer=2, save=True)
+    main(config)
