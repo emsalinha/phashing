@@ -18,7 +18,7 @@ def hash_and_write(movie_name, frame_paths, hash_method, hash_params, fps=25):
     speed = 0
 
     hash_len = hash_params['hash_size'] * hash_params['hash_size']
-    #frame_paths = frame_paths[0::fps]
+    frame_paths = frame_paths[0::fps]
     n_frames = len(frame_paths)
 
     ds_size_hashes = (n_frames, hash_len)
