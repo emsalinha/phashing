@@ -54,15 +54,18 @@ def save_incorrect_matches(distances_paths, len_trailer, home, min_distance=True
         for path in distances_paths:
 
             movie_name = path.split('/')[-1].split('distances_')[-1].split('.')[0]
+            print(movie_name)
 
             ds_name, fpm_ds = read_distances(path, i)
             ds_name, fpt_ds = read_distances(path, i + 1)
             ds_name, distances_ds = read_distances(path, i + 2)
 
             assert(hash_type == clean_name(ds_name), "Incorrect indexing of hash type")
+            print(hash_type, clean_name(ds_name))
 
             dis_dist, dis_fpm, dis_fpt = get_dissimilar(distances_ds, fpm_ds, fpt_ds, len_trailer=len_trailer)
             incorrect_matches = get_incorrect_fns(dis_dist, dis_fpm, dis_fpt, min_distance=min_distance)
+            print(incorrect_matches)
 
             all_incorrect_matches[hash_type][movie_name] = incorrect_matches
 
