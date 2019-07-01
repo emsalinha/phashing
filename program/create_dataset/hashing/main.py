@@ -17,7 +17,7 @@ def main(config):
 	speed_csv = open(home + 'results/speed_hashing_new.csv', 'w')
 
 	frame_dirs = sorted(glob.glob(home + 'frames/*'))
-	movie_indeces = [2, 6, 8, 19, 15, 36, 41]
+	movie_indeces = [19, 15, 36, 41]
 	frame_dirs = [frame_dirs[mi] for mi in movie_indeces]
 
 	hash_params = {

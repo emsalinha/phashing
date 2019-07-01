@@ -33,30 +33,44 @@ def hash_and_write(movie_name, frame_paths, hash_method, hash_params, fps=25):
     ds_name_hashes = '{}/{}/{}/hashes'.format(group_name, subgroup_name, subsubgroup_name)
     ds_name_frames = '{}/{}/{}/frames'.format(group_name, subgroup_name, subsubgroup_name)
 
-    # hdf5_store = h5py.File('hashes_{}.hdf5'.format(movie_name), 'a')
-    # dt = h5py.special_dtype(vlen=np.dtype('int32'))
-    # frame_paths_ds = hdf5_store.create_dataset(ds_name_frames, ds_size_fps, dtype=dt)
+    hdf5_store = h5py.File('annotated_hashes_{}.hdf5'.format(movie_name), 'a')
+    print(ds_name_hashes)
+    phashes_ds = hdf5_store.create_dataset(ds_name_hashes, ds_size_hashes, compression='gzip')
+    dt = h5py.special_dtype(vlen=np.dtype('int32'))
+    frame_paths_ds = hdf5_store.create_dataset(ds_name_frames, ds_size_fps, dtype=dt)
 
-    try:
-        hdf5_store = h5py.File('hashes_{}.hdf5'.format(movie_name), 'a')
-        phashes_ds = hdf5_store.create_dataset(ds_name_hashes, ds_size_hashes, compression='gzip')
+    start = time.time()
 
-        dt = h5py.special_dtype(vlen=np.dtype('int32'))
-        frame_paths_ds = hdf5_store.create_dataset(ds_name_frames, ds_size_fps, dtype=dt)
+    for i in range(0, n_frames):
+        phash = hash_method(frame_paths[i], hash_params)
+        phashes_ds[i] = phash
 
-        start = time.time()
+        frame_nr = frame_paths[i].split('/')[-1].split('_')[1].split('.')[0]
+        frame_paths_ds[i] = [int(frame_nr)]
 
-        for i in range(0, n_frames):
-            phash = hash_method(frame_paths[i], hash_params)
-            phashes_ds[i] = phash
+    end = time.time()
+    speed = (end-start)/n_frames
 
-            frame_nr = frame_paths[i].split('/')[-1].split('_')[0]
-            frame_paths_ds[i] = [int(frame_nr)]
+    # try:
+    #     hdf5_store = h5py.File('annotated_hashes_{}.hdf5'.format(movie_name), 'a')
+    #     phashes_ds = hdf5_store.create_dataset(ds_name_hashes, ds_size_hashes, compression='gzip')
+    #     print(ds_name_hashes)
+    #     dt = h5py.special_dtype(vlen=np.dtype('int32'))
+    #     frame_paths_ds = hdf5_store.create_dataset(ds_name_frames, ds_size_fps, dtype=dt)
 
-        end = time.time()
-        speed = (end-start)/n_frames
+    #     start = time.time()
 
-    except:
-        print('no hashes saved')
+    #     for i in range(0, n_frames):
+    #         phash = hash_method(frame_paths[i], hash_params)
+    #         phashes_ds[i] = phash
+
+    #         frame_nr = frame_paths[i].split('/')[-1].split('_')[0]
+    #         frame_paths_ds[i] = [int(frame_nr)]
+
+    #     end = time.time()
+    #     speed = (end-start)/n_frames
+
+    # except:
+    #     print('no hashes saved')
 
     return speed
