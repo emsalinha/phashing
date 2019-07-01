@@ -81,7 +81,7 @@ def main(config):
         from utils.traverse_datasets import read_distances
         from utils.traverse_datasets import traverse_datasets
         len_trailer = config.len_trailer * 60
-        home = 'movie-drive/'
+        home = '/movie-drive/'
 
     else:
         from get_data.extract_data.utils.traverse_datasets import read_distances
@@ -98,8 +98,8 @@ def main(config):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    # parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
-    parser.add_argument('--trailer_length', type=int, default=5, help='trailer length in minutes')
+    parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
+    parser.add_argument('--len_trailer', type=int, default=5, help='trailer length in minutes')
     # parser.add_argument('--rb', type=bool, default=False, help='remove hashes of black frames')
     # parser.add_argument('--rio', type=bool, default=False, help='remove intro and outro')
     config = parser.parse_args()
