@@ -38,10 +38,10 @@ def main(config):
 		hashes_wd = home + 'hashes/' + movie_name
 
 		try:
-			os.chdir(hashes_wd)
-		except:
 			os.mkdir(hashes_wd)
 			os.chdir(hashes_wd)
+		except:
+			continue
 
 		for hash_method in hash_methods:
 			for hash_size in hash_sizes:
