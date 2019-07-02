@@ -100,6 +100,8 @@ def get_distances_and_write(config):
                 if config.rio:
                     movie_hashes, movie_fns = remove_intro_outro_movie(movie_hashes, movie_fns)
                     trailer_hashes, trailer_fns = remove_intro_outro_trailer(config, trailer_hashes, trailer_fns)
+                else:
+                    raise NotImplementedError
 
                 if config.rb:
                     movie_hashes, movie_fns = remove_black_hashes(movie_hashes)
@@ -118,6 +120,6 @@ if __name__ == "__main__":
     parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
     parser.add_argument('--trailer_length', type=int, default=5, help='trailer length in minutes')
     parser.add_argument('--rb', type=bool, default=False, help='remove hashes of black frames')
-    parser.add_argument('--rio', type=bool, default=False, help='remove intro and outro')
+    parser.add_argument('--rio', type=bool, default=True, help='remove intro and outro')
     config = parser.parse_args()
     get_distances_and_write(config)

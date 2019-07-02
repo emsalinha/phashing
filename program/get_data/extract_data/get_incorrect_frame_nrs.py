@@ -4,6 +4,8 @@ import argparse
 import glob
 import os
 
+from get_data.extract_data.utils.traverse_datasets import read_distances
+from get_data.extract_data.utils.traverse_datasets import traverse_datasets
 
 def get_dissimilar(distances, fpm, fpt, len_trailer):
     dis_dist = distances[len_trailer:]
@@ -34,7 +36,7 @@ def clean_name(dataset):
 
 def get_datasets(file_path):
     ds = [d for d in traverse_datasets(file_path)]
-    ds_distances = [d for d in ds if d.endswith('hashes')]
+    ds_distances = [d for d in ds if d.endswith('distances')]
     ds_movie_fns = [d for d in ds if d.endswith('movie_fns')]
     ds_trailer_fns = [d for d in ds if d.endswith('trailer_fns')]
     return ds_distances, ds_movie_fns, ds_trailer_fns
@@ -60,9 +62,6 @@ def save_incorrect_matches(distances_paths, len_trailer, home, min_distance=True
             ds_name, fpt_ds = read_distances(path, i + 1)
             ds_name, distances_ds = read_distances(path, i + 2)
 
-            assert(hash_type == clean_name(ds_name), "Incorrect indexing of hash type")
-            print(hash_type, clean_name(ds_name))
-
             dis_dist, dis_fpm, dis_fpt = get_dissimilar(distances_ds, fpm_ds, fpt_ds, len_trailer=len_trailer)
             incorrect_matches = get_incorrect_fns(dis_dist, dis_fpm, dis_fpt, min_distance=min_distance)
             print(incorrect_matches)
@@ -77,28 +76,18 @@ def save_incorrect_matches(distances_paths, len_trailer, home, min_distance=True
 
 def main(config):
 
-    if config.VM:
-        from utils.traverse_datasets import read_distances
-        from utils.traverse_datasets import traverse_datasets
-        len_trailer = config.len_trailer * 60
-        home = '/movie-drive/'
+    len_trailer = config.len_trailer
+    home = os.getenv('HOME') + '/movie-drive/'
 
-    else:
-        from get_data.extract_data.utils.traverse_datasets import read_distances
-        from get_data.extract_data.utils.traverse_datasets import traverse_datasets
-        len_trailer = config.len_trailer
-        home = os.getenv('HOME') + '/movie-drive/'
-
-    distances_folders = home + 'results/distances'
+    distances_folders = glob.glob(home + 'distances/*')
     distances_paths = [sorted(glob.glob(distances_folder + '/*'))[0] for distances_folder in distances_folders]
 
-    matches = save_incorrect_matches(distances_paths, len_trailer, home)
-
+    matches = save_incorrect_matches(distances_paths, len_trailer, home, save=True)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
+    #parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
     parser.add_argument('--len_trailer', type=int, default=5, help='trailer length in minutes')
     # parser.add_argument('--rb', type=bool, default=False, help='remove hashes of black frames')
     # parser.add_argument('--rio', type=bool, default=False, help='remove intro and outro')

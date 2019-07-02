@@ -75,7 +75,10 @@ def download_incorrect_frames(incorrect_matches):
 
 if __name__ == "__main__":
 
-    with open('incorrect_matches.pickle', 'rb') as handle:
+    home = os.getenv('HOME')
+    im_dir = home + '/movie-drive/results/'
+
+    with open(im_dir + 'incorrect_matches.pickle', 'rb') as handle:
         im = pickle.load(handle)
 
     download_incorrect_frames(im)
