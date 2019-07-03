@@ -10,7 +10,7 @@ from get_data.extract_data.utils.traverse_datasets import traverse_datasets
 def get_dissimilar(distances, fpm, fpt, len_trailer):
     dis_dist = distances[len_trailer:]
     dis_fpm = fpm[len_trailer:]
-    dis_fpt = fpt[len_trailer:]
+    dis_fpt = fpt[:len_trailer]
     return dis_dist, dis_fpm, dis_fpt
 
 def get_incorrect_fns(dis_dist, dis_fpm, dis_fpt, min_distance=True):

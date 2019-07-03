@@ -15,7 +15,7 @@ def return_VM_path(movie_name, frame_nr):
     return path
 
 def init_frame_nrs():
-    fns = range(0, 800000)
+    fns = range(0, 8000000)
     fns = [zero_pad_nr(f) for f in fns]
     fns = fns[::25]
     fns = fns[60:-300]
@@ -27,9 +27,17 @@ def get_paths_incorrect_frames(incorrect_matches, hash_type):
     all_v_paths = []
     all_t_paths = []
     for movie_name in incorrect_matches[hash_type].keys():
-        video_indeces, trailer_indeces = incorrect_matches[hash_type][movie_name]
-        t_indeces = list(set(trailer_indeces))
-        v_indeces = list(set(video_indeces))
+
+        matches = incorrect_matches[hash_type][movie_name]
+
+        if len(matches) < 1:
+            continue
+        else:
+            video_indeces, trailer_indeces = zip(*matches)
+
+
+        t_indeces = sorted(list(set([t.item() for t in trailer_indeces])))
+        v_indeces = sorted(list(set([v.item() for v in video_indeces])))
         t_fns = frame_nrs[t_indeces]
         v_fns = frame_nrs[v_indeces]
         t_paths = [return_VM_path(movie_name, fn) for fn in t_fns]
@@ -46,7 +54,13 @@ def download_incorrect_frames(incorrect_matches):
 
     for hash_type in hash_types:
 
-        v_paths, t_paths = get_paths_incorrect_frames(hash_type)
+        v_paths, t_paths = get_paths_incorrect_frames(incorrect_matches, hash_type)
+
+        if len(v_paths) > 20:
+            v_paths = v_paths[:20]
+        if len(t_paths) > 20:
+            t_paths = t_paths[:20]
+
         wrong_frames_path = '/home/emsala/movie-drive/results/wrong_frames/{}/'.format(hash_type)
 
         try:
