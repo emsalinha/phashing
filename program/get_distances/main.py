@@ -73,7 +73,7 @@ def get_distances_and_write(config):
         try:
             os.mkdir(distances_wd)
         except:
-            pass
+            continue
 
 
         file_name = get_file_name(config, movie_name)
