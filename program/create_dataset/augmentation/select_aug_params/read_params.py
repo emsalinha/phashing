@@ -9,7 +9,6 @@ def read_params(method):
         return param_moments
 
 
-
 if __name__ == '__main__':
     methods = ['add', 'gauss', 'compress', 'subtract_hsv', 'add_hsv', 'contrast', 'subtract']
 

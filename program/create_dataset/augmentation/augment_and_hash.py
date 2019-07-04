@@ -1,10 +1,3 @@
-import pickle
-import glob
-import cv2
-from create_dataset.augmentation.select_aug_params.read_params import read_params
-from create_dataset.augmentation.select_aug_params.return_augmenter import return_augmenter
-from create_dataset.augmentation.select_aug_params.MSSIM.open_image import open_image
-from create_dataset.hashing.hash_functions import DCT_hash, AVG_hash
 
 def augment_and_hash(img_path, hash_method, aug_method, param, color=True):
     """

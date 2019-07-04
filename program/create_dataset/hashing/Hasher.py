@@ -14,12 +14,14 @@ class Hasher:
         self.horizontal = None
         self.vertical = None
 
+
+
     def set(self):
         setattr(self.DCT_hash, 'name', 'DCT')
         setattr(self.AVG_hash, 'name', 'AVG')
 
-
     def __extract_params__(self, hash_params):
+
         if hash_params['hash_method'].__name__ == 'DCT_hash':
                 self.hash_size = hash_params['hash_size']
                 self.high_freq_factor = hash_params['high_freq_factor']
@@ -37,7 +39,7 @@ class Hasher:
             phash = self.AVG_hash(frame)
         return phash
 
-    def DCT_hash(self, frame):
+    def DCT_hash(self, frame, hash_params):
         """edit of phash_own function from the github phash library for python"""
         if self.load_frame:
             pixels = self.load_DCT_frame(frame)
@@ -51,7 +53,7 @@ class Hasher:
         phash = np.array(phash)
         return phash
 
-    def AVG_hash(self, frame):
+    def AVG_hash(self, frame, hash_params):
         """edit of ahash function from the github phash library for python"""
         if self.load_frame:
             pixels = self.load_AVG_frame(frame)

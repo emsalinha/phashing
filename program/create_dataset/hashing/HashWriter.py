@@ -13,7 +13,7 @@ class HashWriter:
         self.home = str()
         self.__import_modules__()
         self.hash_params = {
-            'method': None,
+            'hash_method': None,
             'augmentation': False,
             'hash_size': None,
             'high_freq_factor': 8,
