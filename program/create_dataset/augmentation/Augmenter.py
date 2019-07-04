@@ -101,4 +101,4 @@ class Augmenter:
 
 if __name__ == '__main__':
 
-    augmennt = Augmenter()
+    augment = Augmenter()
