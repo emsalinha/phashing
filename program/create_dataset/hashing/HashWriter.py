@@ -5,6 +5,7 @@ import os
 import glob
 import argparse
 
+
 class HashWriter:
 
     def __init__(self, config):
@@ -26,12 +27,17 @@ class HashWriter:
         self.fps = 25
         self.ds_name_frames = str()
         self.ds_name_hashes = str()
+        self.movie_name = str()
+
         self.frame_dirs = sorted(glob.glob(self.home + 'frames/*'))
+        self.frame_paths = []
+
         self.speed_per_hash = 0
         self.speed_csv = open(self.home + 'results/speed_hashing_new.csv', 'w')
 
+        self.hash_and_write()
 
-    def import_modules(self):
+    def __import_modules__(self):
         if self.config.VM:
             self.home = '/movie-drive/'
             from Hasher import Hasher
@@ -41,7 +47,6 @@ class HashWriter:
             from create_dataset.hashing.Hasher import Hasher
             self.hasher = Hasher()
 
-
     def hash_and_write(self):
 
         for frame_dir in self.frame_dirs:
@@ -50,7 +55,7 @@ class HashWriter:
             self.frame_paths = frame_paths[0::self.fps]
 
             self.movie_name = frame_paths[0].split('/')[-2]
-            hashes_wd = self.home + 'hashes/' + movie_name
+            hashes_wd = self.home + 'hashes/' + self.movie_name
 
             try:
                 os.mkdir(hashes_wd)
@@ -64,10 +69,10 @@ class HashWriter:
                     self.hash_params['hash_size'] = hash_size
                     self.hash_params['hash_method'] = hash_method
                     self.get_ds_names()
-                    self.hash_and_write()
+                    self.hash()
 
                     hash_construction = '{}_{}'.format(hash_method.__name__, hash_size)
-                    self.speed_csv.write('{}: {}: {}\n'.format(movie_name, hash_construction, self.speed))
+                    self.speed_csv.write('{}: {}: {}\n'.format(self.movie_name, hash_construction, self.speed_per_hash))
 
         self.speed_csv.close()
 
@@ -98,16 +103,9 @@ class HashWriter:
         frame_paths_ds = hdf5_store.create_dataset(self.ds_name_frames, ds_size_fps, dtype=dt)
         return phashes_ds, frame_paths_ds
 
-    def hash_and_write(self):
+    def hash(self):
         """
         writes hashes one by one to a (newly created) HDF5 file in the working directory
-        :param movie_name: 'movie name'
-        :param frame_paths: [paths to frames in movie]
-        :param hash_method: DCT or average hash
-        :param hash_params: {augmentation, hash_size, high_freq_factor, vertical, horizontal}
-        :param fps: sampled frames per second
-        :return time spend per hash
-        :output hdf5 file: /augmentation/hash_method/hash_size
         """
         print(self.ds_name_hashes)
 
@@ -130,7 +128,7 @@ class HashWriter:
 
 
 if __name__ == "__main__":
-	parser = argparse.ArgumentParser()
-	parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
-	config = parser.parse_args()
-	hasher = HashWriter(config)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
+    configuration = parser.parse_args()
+    hasher = HashWriter(configuration)

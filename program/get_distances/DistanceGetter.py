@@ -12,15 +12,14 @@ class DistanceGetter:
         self.config = config
         self.drive = self.get_drive()
         self.hash_dirs = sorted(glob.glob(self.drive + 'hashes/*'))
+        self.get_distances_and_write()
 
     def get_drive(self):
-        if config.VM:
+        if self.config.VM:
             drive = '/movie-drive/'
         else:
             drive = os.getenv('HOME') + '/movie-drive/'
         return drive
-
-
 
 
     def get_distances_and_write(self):
@@ -61,14 +60,14 @@ class DistanceGetter:
                     trailer_hashes = hashes_store[hash_ds]
                     trailer_fns = hashes_store[fn_ds]
 
-                    if config.rio:
+                    if self.config.rio:
                         movie_hashes, movie_fns = self.remove_intro_outro_movie(movie_hashes, movie_fns)
-                        trailer_hashes, trailer_fns = self.remove_intro_outro_trailer(config, trailer_hashes,
+                        trailer_hashes, trailer_fns = self.remove_intro_outro_trailer(self.config, trailer_hashes,
                                                                                  trailer_fns)
                     else:
                         raise NotImplementedError
 
-                    if config.rb:
+                    if self.config.rb:
                         movie_hashes, movie_fns = self.remove_black_hashes(movie_hashes)
                         trailer_hashes, trailer_fns = self.remove_black_hashes(trailer_hashes)
 
@@ -154,5 +153,5 @@ if __name__ == "__main__":
     parser.add_argument('--trailer_length', type=int, default=5, help='trailer length in minutes')
     parser.add_argument('--rb', type=bool, default=False, help='remove hashes of black frames')
     parser.add_argument('--rio', type=bool, default=True, help='remove intro and outro')
-    config = parser.parse_args()
-    get_distances_and_write(config)
+    configuration = parser.parse_args()
+    distance_getter = DistanceGetter(configuration)

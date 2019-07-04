@@ -5,7 +5,7 @@ from PIL import Image
 
 class Hasher:
 
-    def __init__(self, hash_params):
+    def __init__(self):
         self.load_frame = True
         self.hash_methods = [self.DCT_hash, self.AVG_hash]
         self.set()
@@ -32,11 +32,10 @@ class Hasher:
     def hash(self, frame, hash_params):
         self.__extract_params__(hash_params)
         if hash_params['hash_method'].__name__ == 'DCT_hash':
-            hash = self.DCT_hash(frame)
+            phash = self.DCT_hash(frame)
         elif hash_params['hash_method'].__name__ == 'AVG_hash':
-            hash = self.AVG_hash(frame)
-        return hash
-
+            phash = self.AVG_hash(frame)
+        return phash
 
     def DCT_hash(self, frame):
         """edit of phash_own function from the github phash library for python"""
@@ -48,10 +47,9 @@ class Hasher:
         dctlowfreq = dct[:self.hash_size, :self.hash_size]
         med = np.median(dctlowfreq)
         diff = dctlowfreq > med
-        hash = [1 if x == True else 0 for x in diff.flatten()]
-        hash = np.array(hash)
-        return hash
-
+        phash = [1 if x == True else 0 for x in diff.flatten()]
+        phash = np.array(phash)
+        return phash
 
     def AVG_hash(self, frame):
         """edit of ahash function from the github phash library for python"""
@@ -61,9 +59,9 @@ class Hasher:
             pixels = frame
         avg = pixels.mean()
         diff = pixels > avg
-        hash = [1 if x == True else 0 for x in diff.flatten()]
-        hash = np.array(hash)
-        return hash
+        phash = [1 if x == True else 0 for x in diff.flatten()]
+        phash = np.array(phash)
+        return phash
 
     def load_AVG_frame(self, frame_path):
         im = Image.open(frame_path)
@@ -78,9 +76,3 @@ class Hasher:
         image = im.convert("L").resize((img_size, img_size), Image.ANTIALIAS)
         pixels = np.asarray(image)
         return pixels
-
-
-
-
-
-
