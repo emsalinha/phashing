@@ -112,7 +112,7 @@ class HashWriter:
         print(self.ds_name_hashes)
 
         phashes_ds, frame_paths_ds = self.create_h5py_stores()
-        
+
         n_frames = len(self.frame_paths)
 
         start = time.time()
