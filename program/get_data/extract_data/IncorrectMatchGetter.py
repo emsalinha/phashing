@@ -12,7 +12,7 @@ class IncorrectMatchGetter:
 
     def __init__(self, config):
         self.config = config
-        self.threshold = 0.06
+        self.threshold = 0.5
         self.min_distance = True
         self.len_trailer = self.config.len_trailer * 60
         self.drive = self.get_drive()
@@ -103,6 +103,7 @@ class IncorrectMatchGetter:
             minimum_distances = np.amin(self.non_matching_distances, axis=1)
             i_trailer_minimum = np.argmin(self.non_matching_distances, axis=1)
             i_movie_incorrect_match = np.where(minimum_distances < self.threshold)[0]
+            incorrect_distances = minimum_distances[minimum_distances < self.threshold]
             i_trailer_incorrect_match = i_trailer_minimum[i_movie_incorrect_match]
 
         else:
@@ -113,10 +114,10 @@ class IncorrectMatchGetter:
         incorrect_fnt = self.non_matching_trailer_fns[i_movie_incorrect_match, i_trailer_incorrect_match]
 
         if not incorrect_fnm.shape[0] == 0:
-            if incorrect_fnt.max() >= incorrect_fnm.max():
+            if incorrect_fnt.max() > incorrect_fnm.min():
                 raise IndexError
 
-        return (incorrect_fnm, incorrect_fnt)
+        return (incorrect_fnm, incorrect_fnt, incorrect_distances)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
