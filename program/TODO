@@ -1,0 +1,20 @@
+# TODO: replace try except with if not os.path.exists()
+# TODO: geen aparte files for enkele functies, alleen groepen functies
+# TODO: utils folder voor de vaakgebruikte functies (utils/frame) etc., hoogte hangt af van waar het door gebruikt wordt
+# TODO: path als argument
+# TODO: optional output file path for saving, anders printen in console
+
+#TODO: class filenames niet met hoofdletter
+#TODO: class niet bij init laten runnen
+
+
+#TODO: maak setter voor wijzigingen van vaste variabelen
+
+#TODO: main zeg weinig, wat gebeurt er als je object wijzigt en dan runt,
+#TODO: een gheel maken van de losstaande stappen
+
+#TODO: enumeration maken van aug_methods, en dan invoeren als type, dan weet je welke opties er zijn,
+# dat maakt t makkelijker te extenden, en hoef je maar op 1 plek aan te passen
+# abstract base class maken voor augmentator
+# duidelijk welke subclass er aan geroepen wordt en dat elke subclass hetzelfde loopt
+#TODO: type hinting toevoegen

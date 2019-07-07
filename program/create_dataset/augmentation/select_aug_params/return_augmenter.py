@@ -1,6 +1,7 @@
 from imgaug import augmenters as iaa
 
 
+
 def return_augmenter(parameter, method):
     if method == 'subtract':
         augmenter = iaa.Sequential([iaa.Add(parameter, True)])

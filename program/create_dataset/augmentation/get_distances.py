@@ -14,7 +14,8 @@ def get_distances_and_write(hash_method, aug_method):
     loc = '/home/emsala/Documenten/Studie/These/phashing/program/create_dataset/augmentation/'
 
     with open(loc + 'aug_hashes/{}_12/{}_hashes.pickle'.format(hash_method.__name__, None), 'rb') as handle:
-        phashes = np.array(pickle.load(handle))
+        phashes = np.array(pickle.load
+                           (handle))
 
     with open(loc + 'aug_hashes/{}_12/{}_hashes.pickle'.format(hash_method.__name__, aug_method), 'rb') as handle:
         phashes_aug_dict = pickle.load(handle)

@@ -1,80 +1,131 @@
 import numpy as np
 import scipy.fftpack as scf
 from PIL import Image
+import logging
+import abc
+import cv2
+
+class Hasher(abc.ABC):
+
+    def __init__(self, hash_params=None):
+
+        self.logger = logging.getLogger(self.__class__.__name__)
+        self.hash_params = {
+            'hash_method': None,
+            'augmentation': None,
+            'hash_size': 12,
+            'high_freq_factor': 4,
+            'vertical': 0,
+            'horizontal': 0
+        }
+
+        if hash_params != None:
+            self.hash_params = hash_params
+
+    def set_params(self, hash_params: dict):
+        self.hash_params = hash_params
 
 
-class Hasher:
+    def phash(self, img, load_img=True):
 
-    def __init__(self):
-        self.load_frame = True
-        self.hash_methods = [self.DCT_hash, self.AVG_hash]
-        self.set()
-        self.hash_size = None
-        self.high_freq_factor = None
-        self.horizontal = None
-        self.vertical = None
+        if load_img:
+            img_path = img
+            img_array = self.__load_frame__(img_path)
 
+        else:
+            img_array = img
+            img_array = self.__remove_colour__(img_array)
 
-
-    def set(self):
-        setattr(self.DCT_hash, 'name', 'DCT')
-        setattr(self.AVG_hash, 'name', 'AVG')
-
-    def __extract_params__(self, hash_params):
-
-        if hash_params['hash_method'].__name__ == 'DCT_hash':
-                self.hash_size = hash_params['hash_size']
-                self.high_freq_factor = hash_params['high_freq_factor']
-
-        elif hash_params['hash_method'].__name__ == 'AVG_hash':
-                self.hash_size = hash_params['hash_size']
-                self.vertical = hash_params['vertical']
-                self.horizontal = hash_params['horizontal']
-
-    def hash(self, frame, hash_params):
-        self.__extract_params__(hash_params)
-        if hash_params['hash_method'].__name__ == 'DCT_hash':
-            phash = self.DCT_hash(frame)
-        elif hash_params['hash_method'].__name__ == 'AVG_hash':
-            phash = self.AVG_hash(frame)
+        phash = self.__phash_array__(img_array)
         return phash
 
-    def DCT_hash(self, frame, hash_params):
+    def __remove_colour__(self, img_array):
+
+        if len(img_array.shape) > 2:
+            if img_array.shape[2] > 1:
+                img_array = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
+
+            else:
+                img_array = img_array.squeeze(axis=2)
+
+        return img_array
+
+
+
+    @abc.abstractmethod
+    def __load_frame__(self, img_path):
+        pass
+
+    @abc.abstractmethod
+    def __phash_array__(self, img):
+        pass
+
+
+class DCTHash(Hasher):
+
+    def __init__(self):
+        super().__init__()
+        self.logger = logging.getLogger(self.__class__.__name__)
+
+    def __phash_array__(self, pixels):
+
+        hash_size = self.hash_params['hash_size']
         """edit of phash_own function from the github phash library for python"""
-        if self.load_frame:
-            pixels = self.load_DCT_frame(frame)
-        else:
-            pixels = frame
         dct = scf.dct(scf.dct(pixels, axis=0), axis=1)
-        dctlowfreq = dct[:self.hash_size, :self.hash_size]
+        dctlowfreq = dct[:hash_size, :hash_size]
         med = np.median(dctlowfreq)
         diff = dctlowfreq > med
         phash = [1 if x == True else 0 for x in diff.flatten()]
         phash = np.array(phash)
         return phash
 
-    def AVG_hash(self, frame, hash_params):
+    def __load_frame__(self, frame_path):
+        hash_size = self.hash_params['hash_size']
+        high_freq_factor = self.hash_params['high_freq_factor']
+
+        im = Image.open(frame_path)
+        img_size = hash_size * high_freq_factor
+        image = im.convert("L").resize((img_size, img_size), Image.ANTIALIAS)
+        pixels = np.asarray(image)
+        return pixels
+
+
+class AVGHash(Hasher):
+
+    def __init__(self):
+        super().__init__()
+        self.logger = logging.getLogger(self.__class__.__name__)
+
+    def __phash_array__(self, pixels):
+
         """edit of ahash function from the github phash library for python"""
-        if self.load_frame:
-            pixels = self.load_AVG_frame(frame)
-        else:
-            pixels = frame
         avg = pixels.mean()
         diff = pixels > avg
         phash = [1 if x == True else 0 for x in diff.flatten()]
         phash = np.array(phash)
         return phash
 
-    def load_AVG_frame(self, frame_path):
+    def __load_frame__(self, frame_path):
+        hash_size = self.hash_params['hash_size']
+        vertical = self.hash_params['vertical']
+        horizontal = self.hash_params['horizontal']
+
         im = Image.open(frame_path)
-        img_size = (self.hash_size + self.horizontal, self.hash_size + self.vertical)
+        img_size = (hash_size + horizontal, hash_size + vertical)
         image = im.convert("L").resize(img_size, Image.ANTIALIAS)
         pixels = np.asarray(image)
         return pixels
 
-    def load_DCT_frame(self, frame_path):
-        im = Image.open(frame_path)
-        img_size = self.hash_size * self.high_freq_factor
-        image = im.convert("L").resize((img_size, img_size), Image.ANTIALIAS)
-        pixels = np.asarray(image)
-        return pixels
+
+if __name__ == "__main__":
+
+    img_path = '/home/emsala/Documenten/Studie/These/phashing/program/create_dataset/augmentation/sample_frames/sampled_frames/1_127-Hours_frame_050000.jpg'
+    dct_hasher = DCTHash()
+    phash = dct_hasher.phash(img_path, load_img=True)
+    print(phash.shape)
+    params = dct_hasher.hash_params
+    params['hash_size'] = 8
+    dct_hasher.set_params(params)
+    phash = dct_hasher.phash(img_path, load_img=True)
+    print(phash.shape)
+
