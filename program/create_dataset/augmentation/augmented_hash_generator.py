@@ -89,8 +89,6 @@ if __name__ == '__main__':
 
     augmenter = Augmenter(aug_methods)
 
-    aug_methods = ['add_hsv', 'subtract_hsv', 'add', 'gauss', 'compress', 'contrast', 'subtract', None]
-
     output_path = os.getcwd()
 
     augmentedhasher = AugmentedHashGenerator(img_paths, output_path, augmenter, hasher)

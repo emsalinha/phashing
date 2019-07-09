@@ -1,23 +1,27 @@
-from create_dataset.augmentation.augmenter import Augmenter
-from create_dataset.hashing.hasher import Hasher
+from create_dataset.augmentation.augmenter import Augmenter, AugmentationMethods
+from create_dataset.hashing.hasher import Hasher, DCTHash, AVGHash
 from create_dataset.augmentation.augmented_hash_generator import AugmentedHashGenerator
+import glob
+import random
+import os
 
+img_paths = glob.glob('/home/emsala/Documenten/Studie/These/phashing/program/'
+                      'create_dataset/augmentation/sample_frames/sampled_frames/*')
 
-augmenter = Augmenter()
-augmenter.aug_methods.init_compression(.9)
-augmenter.aug_methods.init_add(50)
-augmenter.augment_img()
+hasher = DCTHash()
+aug_methods = AugmentationMethods()
 
+pr = list(aug_methods.param_range_add)
+random.shuffle(pr)
+aug_methods.init_add(parameter=pr[0])
+pr = list(aug_methods.param_range_contrast)
+random.shuffle(pr)
+aug_methods.init_contrast(parameter=pr[0])
 
-if __name__ == "__main__":
+augmenter = Augmenter(aug_methods)
 
-    img_path = '/home/emsala/Documenten/Studie/These/phashing/program/create_dataset/augmentation/sample_frames/sampled_frames/1_127-Hours_frame_050000.jpg'
-    dct_hasher = DCTHash()
-    phash = dct_hasher.phash(img_path, load_img=True)
-    print(phash.shape)
-    params = dct_hasher.hash_params
-    params['hash_size'] = 8
-    dct_hasher.set_params(params)
-    phash = dct_hasher.phash(img_path, load_img=True)
-    print(phash.shape)
+output_path = os.getcwd()
 
+augmentedhasher = AugmentedHashGenerator(img_paths, output_path, augmenter, hasher)
+augmentedhasher.generate_augmented_hashes(save=False)
+aug_hashes = augmentedhasher.augmented_hashes

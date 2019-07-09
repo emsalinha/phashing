@@ -75,7 +75,8 @@ class IncorrectFrameDownloader:
         self.subset_im = self.subset_im.sort_values(by='distances', ascending=True)
         r, c = self.subset_im.shape
         n_skip = int(r / self.max_matches_per_video)
-        self.subset_im = self.subset_im.iloc[::n_skip, :]
+        n_row = min(r, 3)
+        self.subset_im = self.subset_im.iloc[:n_row, :]
 
     def get_unique_unlinked_paths(self, movie_name, subset_im):
         video_fns, trailer_fns, distances = subset_im
@@ -90,10 +91,10 @@ class IncorrectFrameDownloader:
 
         download_path = self.download_dir + hash_type + '/'
 
-        try:
-            os.mkdir(download_path)
+        if os.path.exists(download_path):
             os.chdir(download_path)
-        except:
+        else:
+            os.mkdir(download_path)
             os.chdir(download_path)
 
         for i in range(0, len(self.paths_incorrect_frames)):
