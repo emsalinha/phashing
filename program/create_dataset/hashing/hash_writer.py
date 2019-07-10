@@ -134,13 +134,16 @@ if __name__ == "__main__":
         from create_dataset.hashing.hasher import Hasher, AVGHash, DCTHash
 
     frame_dirs = sorted(glob.glob(os.path.join(home, 'trailer_frames') +'/*'))
-    hash_dir = os.path.join(home, 'hashes')
+    hash_dir = os.path.join(home, 'trailer_hashes')
     log_path = os.path.join(home, 'results')
 
 
     dct_hasher = DCTHash()
     dct_hasher.hash_params['augmentation'] = False
     for frame_dir in frame_dirs:
-        hash_writer = HashWriter(dct_hasher, frame_dir=frame_dir, hash_dir=hash_dir, log_path=log_path)
-        print(hash_writer.movie_name)
-        hash_writer.write_hashes()
+        try:
+            hash_writer = HashWriter(dct_hasher, frame_dir=frame_dir, hash_dir=hash_dir, log_path=log_path)
+            print(hash_writer.movie_name)
+            hash_writer.write_hashes()
+        except:
+            print(hash_writer.movie_name, ' already hashed')
