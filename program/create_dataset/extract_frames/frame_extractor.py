@@ -156,7 +156,7 @@ class FrameExtractor:
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--VM', type=bool, default=True, help='Running on VM or not')
+	parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
 	parser.add_argument('--video_paths', type=str, default=None, help='location of videos')
 	parser.add_argument('--frames_dir', type=str, default=None, help='location to save frames')
 	parser.add_argument('--fps', type=int, default=1, help='sample rate in frames per second')

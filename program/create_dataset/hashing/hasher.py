@@ -9,12 +9,11 @@ class Hasher(abc.ABC):
 
     def __init__(self, hash_params=None):
 
-        self.logger = logging.getLogger(self.__class__.__name__)
         self.hash_params = {
-            'hash_method': None,
+            'hash_method': self.__class__.__name__,
             'augmentation': None,
             'hash_size': 12,
-            'high_freq_factor': 4,
+            'high_freq_factor': 8,
             'vertical': 0,
             'horizontal': 0
         }
@@ -66,6 +65,7 @@ class DCTHash(Hasher):
     def __init__(self):
         super().__init__()
         self.logger = logging.getLogger(self.__class__.__name__)
+
 
     def __phash_array__(self, pixels):
 
