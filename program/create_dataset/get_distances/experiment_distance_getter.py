@@ -6,7 +6,7 @@ import h5py
 import numpy as np
 
 
-class DistanceGetter:
+class ExperimentDistanceGetter:
 
     def __init__(self, config):
         self.config = config
