@@ -126,17 +126,21 @@ if __name__ == "__main__":
     hashes_paths = [glob.glob(dir + '/*')[0] for dir in hashes_dirs]
     trailer_hashes_paths = [glob.glob(dir + '/*')[0] for dir in trailer_hashes_dirs]
 
-
-    trailer_ns = [os.path.basename(t).split('_')[1] for t in trailer_hashes_paths]
-
+    trailer_ns = sorted([t.split('/')[-2].split('_')[0] for t in trailer_hashes_paths]) 
+    
     cleaned_hashes_paths = []
+    
     for path in hashes_paths:
-        if os.path.basename(path).split('_')[1] in trailer_ns:
+        print(path)
+        movie_ns = path.split('/')[-2].split('_')[0]
+        print(movie_ns)
+        if movie_ns in trailer_ns:
             cleaned_hashes_paths.append(path)
 
+    print(cleaned_hashes_paths)
     distances_wd = os.path.join(drive, 'distances')
 
-    distance_getter = DistanceGetter(distances_dir= distances_wd, movies_hashes_paths=sorted(cleaned_hashes_paths),
-                                     trailers_hashes_paths=sorted(trailer_hashes_paths), remove_black_hashes=config.rb)
+    distance_getter = DistanceGetter(distances_dir= distances_wd, trailers_hashes_paths=sorted(cleaned_hashes_paths),
+                                     movies_hashes_paths=sorted(trailer_hashes_paths), remove_black_hashes=config.rb)
 
     distance_getter.get_distances_and_write()
