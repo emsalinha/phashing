@@ -16,7 +16,7 @@ class DistanceGetter:
         self.trailer_hashes_paths = trailers_hashes_paths
         self.hashes_paths = list(zip(movies_hashes_paths, trailers_hashes_paths))
 
-        self.ds_name_movie = '/unaugmented/DCTHash/12/'
+        self.ds_name_movie = '/unaugmented/DCT_hash/12/'
         self.ds_name_trailer = '/unaugmented/DCTHash/12/'
         self.distances_ds_name = self.__create_ds_name__()
 
@@ -28,6 +28,7 @@ class DistanceGetter:
     def get_distances_and_write(self):
 
         for movie_hashes_path, trailer_hashes_path in self.hashes_paths:
+            print(movie_hashes_path, self.ds_name_movie)
             movie_hashes, movie_fns = self.__get_datasets__(movie_hashes_path, self.ds_name_movie)
             trailer_hashes, trailer_fns = self.__get_datasets__(trailer_hashes_path, self.ds_name_trailer)
 
@@ -131,16 +132,16 @@ if __name__ == "__main__":
     cleaned_hashes_paths = []
     
     for path in hashes_paths:
-        print(path)
+        #print(path)
         movie_ns = path.split('/')[-2].split('_')[0]
-        print(movie_ns)
+        #print(movie_ns)
         if movie_ns in trailer_ns:
             cleaned_hashes_paths.append(path)
 
-    print(cleaned_hashes_paths)
+    #print(cleaned_hashes_paths)
     distances_wd = os.path.join(drive, 'distances')
 
-    distance_getter = DistanceGetter(distances_dir= distances_wd, trailers_hashes_paths=sorted(cleaned_hashes_paths),
-                                     movies_hashes_paths=sorted(trailer_hashes_paths), remove_black_hashes=config.rb)
+    distance_getter = DistanceGetter(distances_dir= distances_wd, trailers_hashes_paths=sorted(trailer_hashes_paths),
+                                     movies_hashes_paths=sorted(cleaned_hashes_paths), remove_black_hashes=config.rb)
 
     distance_getter.get_distances_and_write()
