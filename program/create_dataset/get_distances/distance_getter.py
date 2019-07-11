@@ -33,8 +33,8 @@ class DistanceGetter:
             trailer_hashes, trailer_fns = self.__get_datasets__(trailer_hashes_path, self.ds_name_trailer)
 
             if self.remove_black_hashes:
-                movie_hashes, movie_fns = self.__remove_black_hashes__(movie_hashes, movie_fns)
-                trailer_hashes, trailer_fns = self.__remove_black_hashes__(trailer_hashes, trailer_fns)
+                movie_hashes, movie_fns = self.__remove_black_hashes__(movie_hashes[:], movie_fns[:])
+                trailer_hashes, trailer_fns = self.__remove_black_hashes__(trailer_hashes[:], trailer_fns[:])
 
             movie_name = movie_hashes_path.split('/')[-2]
 
