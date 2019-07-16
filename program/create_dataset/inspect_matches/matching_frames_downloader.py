@@ -40,18 +40,28 @@ class MatchingFramesDownloader:
     def download_matching_frames(self):
 
         for movie_name, matches in self.matches.items():
+            if movie_name.startswith('00'):
+                continue
 
             if matches['distances'].size < 1:
                 pass
 
             df_matches = self.__create_dataframe__(matches)
-            df_matches = self.__reduce_match_amount__(df_matches)
+            #df_matches = self.__reduce_match_amount__(df_matches)
+            df_matches = self.__group_minimum_distances__(df_matches)
+
+            df_matches = df_matches[df_matches['trailer_fns'] != 0].reset_index()
 
             df_matches['v_path'] = df_matches['movie_fns'].apply(lambda x: self.return_VM_path(movie_name, int(x)))
             df_matches['t_path'] = df_matches['trailer_fns'].apply(lambda x: self.return_VM_path(movie_name, int(x)))
 
             self.__download__(df_matches)
 
+    def __filter_group__(self, dfg, col):
+        return dfg[dfg[col] == dfg[col].min()]
+
+    def __group_minimum_distances__(self, df):
+        return df.groupby('trailer_fns', group_keys=False).apply(lambda x: self.__filter_group__(x, 'distances'))
 
     def __download__(self, df_matches):
 
@@ -132,11 +142,12 @@ class MatchingFramesDownloader:
 if __name__ == "__main__":
 
     home = os.getenv('HOME')
-    d_dir = os.path.join(home, 'movie-drive/results/matches')
-    matches_paths = sorted(glob.glob(d_dir + '/*'))
-    matches_paths = [matches_paths[-2]]
-    for matches_path in matches_paths:
-        frame_downloader = MatchingFramesDownloader(matches_path, download_dir=d_dir)
-        new_folder = os.path.join(d_dir, str(frame_downloader.threshold).replace('.', ''))
-        frame_downloader.set_download_dir(new_folder)
-        frame_downloader.download_matching_frames()
+    dir = os.path.join(home, 'movie-drive/results/matches/rb')
+    d_dir = ('/home/emsala/movie-drive/results/matches/images')
+    matches_paths = sorted(glob.glob(dir + '/*'))
+    #matches_paths = [matches_paths[-2]]
+    #for matches_path in matches_paths:
+    frame_downloader = MatchingFramesDownloader('/home/emsala/movie-drive/results/matches/rb/matches_04.pickle', download_dir=d_dir)
+    # new_folder = os.path.join(d_dir, str(frame_downloader.threshold).replace('.', ''))
+    # frame_downloader.set_download_dir(new_folder)
+    frame_downloader.download_matching_frames()
