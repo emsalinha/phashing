@@ -4,10 +4,9 @@ import glob
 import os
 import time
 from typing import List
-from PIL import Image
-import numpy as np
+
 import cv2
-from math import ceil
+import numpy as np
 
 
 class FrameExtractor:
@@ -55,7 +54,7 @@ class FrameExtractor:
 				msg = 'extract {}, {} of {} videos'.format(video_path, i, n_videos_to_extract)
 				print(msg)
 
-			n_frames_video, duration_video = self.extract_frames_video(video_path)
+			n_frames_video, duration_video = self.extract_frames(video_path)
 
 			if self.print:
 				msg = '{} frames in {} time'.format(n_frames_video, duration_video)
@@ -65,30 +64,29 @@ class FrameExtractor:
 				results.writerow([video_name, duration_video, n_frames_video])
 
 
-	def extract_frames_video(self, video_path):
+
+	def extract_frames(self, video_path):
 
 		vidcap = cv2.VideoCapture(video_path)
-		fps_video, n_frames = self.get_frame_info(vidcap)
+		fps_video, n_frames = self.__get_frame_info__(vidcap)
 
-		sample_rate = ceil(fps_video/self.fps)
-
-		n_frames = int(n_frames/sample_rate)
-		len_frame_numbers = max(len(str(n_frames)), 6)
-
-		success, image = vidcap.read()
-		count = 0
+		success = True
 		start = time.time()
 
-		n_frame = 0
+		frame_n = -1
 
 		while success:
+
+
+			frame_id = int(round(vidcap.get(1)))
+			# current frame number, rounded b/c sometimes you get frame intervals which aren't integers...this adds a little imprecision but is likely good enough
 			success, image = vidcap.read()
 
-			if (count%10000 == 0) and (count != 0):
+			if (frame_id%10000 == 0) and (frame_id != 0):
 				duration = (time.time() - start)
-				print(duration/count)
+				print(duration/frame_id)
 
-			if count % sample_rate == 0:
+			if (frame_id * self.fps) % int(fps_video) == 0:
 
 				if self.skip_black_frames:
 					black = self.black_frame(image)
@@ -97,12 +95,11 @@ class FrameExtractor:
 					else:
 						pass
 
-				n = self.zero_pad_nr(n_frame, len_frame_numbers)
+				frame_n += 1
+				n = self.__zero_pad_nr__(frame_n, len_number=6)
 				frame_path = os.path.join(self.frames_path, 'frame_{}.jpg'.format(n))
 				cv2.imwrite(frame_path, image)  # save frame as JPEG file
-				n_frame += 1
 
-			count += 1
 
 		end = time.time()
 		duration = end-start
@@ -110,15 +107,18 @@ class FrameExtractor:
 		last_corrupted_frame = frame_path
 		os.remove(last_corrupted_frame)
 
+		vidcap.release()
+
 		return n_frames, duration
 
-	def zero_pad_nr(self, frame_nr, len_number):
+
+	def __zero_pad_nr__(self, frame_nr, len_number):
 		len_frame_nr = len(str(frame_nr))
 		len_padding = len_number - len_frame_nr
 		new_nr = ('0'*len_padding) + str(frame_nr)
 		return new_nr
 
-	def get_frame_info(self, vidcap):
+	def __get_frame_info__(self, vidcap):
 		(major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
 		if int(major_ver) < 3:
 			frames_per_second = vidcap.get(cv2.cv.CV_CAP_PROP_FPS)
@@ -134,29 +134,28 @@ class FrameExtractor:
 		black = np.all(img == 0)
 		return black
 
-	def change_video_paths(self, video_paths: List):
+	def set_video_paths(self, video_paths: List):
 		self.video_paths = video_paths
 
-	def change_frames_dir(self, frames_dir: str):
+	def set_frames_dir(self, frames_dir: str):
 		self.frames_dir = frames_dir
 
-	def change_output_path(self, output_path: str):
+	def set_output_path(self, output_path: str):
 		self.output_path = output_path
 		if self.output_path == None:
 			self.save = False
 		else:
 			self.save = True
 
-	def change_fps(self, fps: int):
+	def set_fps(self, fps: int):
 		self.fps = fps
 
-	def change_print(self, print: bool):
+	def set_print(self, print: bool):
 		self.print = print
 
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
 	parser.add_argument('--video_paths', type=str, default=None, help='location of videos')
 	parser.add_argument('--frames_dir', type=str, default=None, help='location to save frames')
 	parser.add_argument('--fps', type=int, default=1, help='sample rate in frames per second')
@@ -165,20 +164,19 @@ if __name__ == '__main__':
 
 	config = parser.parse_args()
 
-	if config.VM:
-		home = '/'
-	else:
-		home = os.getenv('HOME') + '/'
 
-	drive_path = home + 'movie-drive/'
-	frames_dir = home + 'movie-drive/trailer_frames/'
+	drive_path = '/movie-drive/'
+	frames_dir = '/movie-drive/trailer_frames/'
+
 	try:
 		os.mkdir(frames_dir)
 	except:
 		'folder exists'
+
 	video_paths = sorted(glob.glob(drive_path + 'trailers/*'))
 	frame_paths = glob.glob(drive_path + 'frames/*')
 	output_path = drive_path + 'results/trailers/'
+
 	try:
 		os.mkdir(output_path)
 	except:

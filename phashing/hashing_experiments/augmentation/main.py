@@ -1,6 +1,6 @@
-from create_dataset.augmentation.augmenter import Augmenter, AugmentationMethods
-from create_dataset.hashing.hasher import Hasher, DCTHash, AVGHash
-from create_dataset.augmentation.augmented_hash_generator import AugmentedHashGenerator
+from phashing.create_dataset.augmentation.augmenter import Augmenter, AugmentationMethods
+from phashing.create_dataset.hashing.hasher import Hasher, DCTHash, AVGHash
+from phashing.create_dataset.augmentation.augmented_hash_generator import AugmentedHashGenerator
 import glob
 import random
 import os

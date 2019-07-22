@@ -6,7 +6,7 @@ import glob
 import argparse
 from typing import List
 import typing
-from hasher import Hasher, AVGHash,DCTHash
+from phashing.create_dataset.hashing.hasher import Hasher, AVGHash,DCTHash
 
 class HashWriter:
 
@@ -123,23 +123,17 @@ class HashWriter:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
     configuration = parser.parse_args()
 
-    if configuration.VM:
-        home = '/movie-drive/'
-        from hasher import Hasher, AVGHash, DCTHash
-    else:
-        home = os.getenv('HOME') + '/movie-drive/'
-        from create_dataset.hashing.hasher import Hasher, AVGHash, DCTHash
+    home = '/movie-drive/'
 
     frame_dirs = sorted(glob.glob(os.path.join(home, 'trailer_frames') +'/*'))
     hash_dir = os.path.join(home, 'trailer_hashes')
     log_path = os.path.join(home, 'results')
 
-
     dct_hasher = DCTHash()
     dct_hasher.hash_params['augmentation'] = False
+
     for frame_dir in frame_dirs:
         try:
             hash_writer = HashWriter(dct_hasher, frame_dir=frame_dir, hash_dir=hash_dir, log_path=log_path)

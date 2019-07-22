@@ -8,29 +8,30 @@ from typing import List
 
 class MatchFinder:
 
-    def __init__(self, distances_paths: List[str], output_path='', save=True):
-        self.save = save
-        self.output_path = output_path
+    def __init__(self, distances_paths: List[str]):
         self.distances_file_paths = distances_paths
 
         self.threshold = 0.35
         self.min_distance = False
-        self.comparison = '/unaugmented/DCT_hash/DCTHash/12'
+        self.dataset = '/unaugmented/DCT_hash/DCTHash/12'
 
         self.matches = {}
+
+    def set_distances_paths(self, distances_paths: List[str]):
+        self.distances_file_paths = distances_paths
 
     def set_threshold(self, threshold):
         self.threshold = threshold
 
-    def get_comparison_options(self, file_path):
-        ds_names = [ds_name for ds_name in self.traverse_datasets(file_path)]
-        comparison_options = list(set(['/'.join(d.split('/')[:-1]) for d in ds_names]))
-        return comparison_options
+    def set_dataset(self, dataset):
+        self.dataset = dataset
 
-    def set_comparison(self, comparison):
-        self.comparison = comparison
+    def get_datasets(self, file_path):
+        ds_names = [ds_name for ds_name in self.__traverse_datasets__(file_path)]
+        datasets = list(set(['/'.join(d.split('/')[:-1]) for d in ds_names]))
+        return datasets
 
-    def get_incorrect_matches(self):
+    def get_incorrect_matches(self, save_matches=False, output_path=''):
 
         for path in self.distances_file_paths:
 
@@ -47,8 +48,8 @@ class MatchFinder:
             self.matches[movie_name]['movie_fns'] = match_movie_fns
             self.matches[movie_name]['trailer_fns'] = match_trailer_fns
 
-        if self.save:
-            self.__save__()
+        if save_matches:
+            self.__save__(output_path)
 
 
     def __get_matches__(self, distances, movie_fns, trailer_fns,):
@@ -70,19 +71,19 @@ class MatchFinder:
 
         return (distances_match, match_movie_fns, match_trailer_fns)
 
-    def __save__(self):
+    def __save__(self, output_path):
         threshold = str(self.threshold).replace('.', '')
         name_file = 'matches_{}.pickle'.format(threshold)
-        path_file = os.path.join(self.output_path, name_file)
+        path_file = os.path.join(output_path, name_file)
         with open(path_file, 'wb') as handle:
             pickle.dump(self.matches, handle)
 
     def __get_datasets__(self, path):
 
         file = h5py.File(path, 'r')
-        ds_name_distances = os.path.join(self.comparison, 'distances')
-        ds_name_movie_fns = os.path.join(self.comparison, 'movie_fns')
-        ds_name_trailer_fns = os.path.join(self.comparison, 'trailer_fns')
+        ds_name_distances = os.path.join(self.dataset, 'distances')
+        ds_name_movie_fns = os.path.join(self.dataset, 'movie_fns')
+        ds_name_trailer_fns = os.path.join(self.dataset, 'trailer_fns')
 
         distances = file[ds_name_distances][:]
         movie_fns = file[ds_name_movie_fns][:]
@@ -115,14 +116,10 @@ class MatchFinder:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
     parser.add_argument('--save', type=bool, default=True, help='save incorrect matches')
     config = parser.parse_args()
 
-    if config.VM:
-        drive = '/movie-drive/'
-    else:
-        drive = os.path.join(os.getenv('HOME'), 'movie-drive')
+    drive = '/movie-drive/'
 
     distances_folders = glob.glob(os.path.join(drive, 'distances') + '/*')
     distances_file_paths = [glob.glob(distances_folder + '/*')[0] for distances_folder in distances_folders]
@@ -130,11 +127,13 @@ if __name__ == "__main__":
     distances_file_paths = sorted(distances_file_paths)
     output_path = os.path.join(drive, 'results')
 
-    match_finder = MatchFinder(save=True, distances_paths=distances_file_paths, output_path=output_path)
-    # comparisons = match_finder.get_comparisons(distances_file_paths[0])
-    # comparison = comparisons[0]
-    # match_finder.set_comparison(comparison)
+    match_finder = MatchFinder(distances_paths=distances_file_paths)
+
+    datasets = match_finder.get_datasets(distances_file_paths[0])
+    dataset = datasets[0]
+    match_finder.set_dataset(dataset)
+    print(match_finder.dataset)
 
     for threshold in [0.1, .15, .2, .25, .3, .35, .4]:
         match_finder.set_threshold(threshold)
-        match_finder.get_incorrect_matches()
+        match_finder.get_incorrect_matches(save_matches=True, output_path=output_path)

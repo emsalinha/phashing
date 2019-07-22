@@ -54,6 +54,9 @@ class DistanceGetter:
                 distances_store.create_dataset(self.distances_ds_name + '/movie_fns', data=movie_fns, compression='gzip')
                 distances_store.create_dataset(self.distances_ds_name + '/trailer_fns', data=trailer_fns, compression='gzip')
 
+            else:
+                print('distances dataset already in store')
+
     def __create_dir__(self, dir):
         if os.path.exists(dir):
             pass
@@ -109,15 +112,11 @@ class DistanceGetter:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--VM', type=bool, default=False, help='Running on VM or not')
     parser.add_argument('--rb', type=bool, default=False, help='remove hashes of black frames')
     config = parser.parse_args()
 
-    if config.VM:
-        drive = '/movie-drive/'
-    else:
-        drive = os.path.join(os.getenv('HOME'), 'movie-drive')
 
+    drive = '/movie-drive/'
     hashes_dir = os.path.join(drive, 'hashes')
     trailer_hashes_dir = os.path.join(drive, 'trailer_hashes')
 
