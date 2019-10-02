@@ -6,7 +6,7 @@ import glob
 import argparse
 from typing import List
 import typing
-from phashing.create_dataset.hashing.hasher import Hasher, AVGHash,DCTHash
+from hasher import Hasher, AVGHash,DCTHash
 
 class HashWriter:
 
@@ -44,9 +44,10 @@ class HashWriter:
         self.fps = fps
 
 
-    def write_hashes(self):
+    def write_hashes(self, report_speed=False):
 
-        self.speed_csv = open(self.speed_csv_path, 'w')
+        if report_speed:
+            self.speed_csv = open(self.speed_csv_path, 'w')
 
         phashes_ds, frame_paths_ds = self.__create_h5py_stores__()
 
@@ -63,19 +64,15 @@ class HashWriter:
             frame_paths_ds[i] = [frame_nr]
 
         end = time.time()
-        self.speed_per_hash = (end-start)/float(n_frames)
 
-        self.__write_speed__()
+        if report_speed:
+            self.speed_per_hash = (end-start)/float(n_frames)
+            self.__write_speed__()
 
 
     def __get_frame_nr__(self, frame_path):
-        """
-        :param frame_path: assume basename format : [path]/[frame]_[frame_nr].[ext]
-        :return: frame_nr
-        """
         base_name = os.path.basename(frame_path)
-        base_name_no_ext = base_name.split('.')[0]
-        frame_nr = base_name_no_ext.split('_')[1]
+        frame_nr = ''.join([n for n in base_name if n.isnumeric()])
         return int(frame_nr)
 
     def __create_hash_dir__(self):
@@ -124,12 +121,12 @@ class HashWriter:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     configuration = parser.parse_args()
-
+    dataset = 'tvsum'
     home = '/movie-drive/'
 
-    frame_dirs = sorted(glob.glob(os.path.join(home, 'trailer_frames') +'/*'))
-    hash_dir = os.path.join(home, 'trailer_hashes')
-    log_path = os.path.join(home, 'results')
+    frame_dirs = sorted(glob.glob(os.path.join(home, 'eval_ds', dataset, 'frames') +'/*'))
+    hash_dir = os.path.join(home, 'phashing/hashes/', dataset)
+    log_path = os.path.join(home, 'phashing/results')
 
     dct_hasher = DCTHash()
     dct_hasher.hash_params['augmentation'] = False

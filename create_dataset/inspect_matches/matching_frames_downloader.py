@@ -8,7 +8,7 @@ import sys
 
 class MatchingFramesDownloader:
 
-    def __init__(self, matches_path, download_dir):
+    def __init__(self, matches_path, download_dir=''):
         self.matches = open_pickle(matches_path)
         self.threshold = self.__get_threshold__(matches_path)
 
@@ -16,6 +16,7 @@ class MatchingFramesDownloader:
         self.to_address = 'emsala@185.127.108.13:'
 
         self.download_dir = download_dir
+        self.df_matches = pd.DataFrame()
 
         self.max_matches_per_video = 50
 
@@ -36,7 +37,7 @@ class MatchingFramesDownloader:
         path = '/movie-drive/frames/{}/frame_{}.jpg'.format(movie_name, fn)
         return path
 
-    def download_matching_frames(self):
+    def get_matching_frames(self):
 
         for movie_name, matches in self.matches.items():
 
@@ -52,6 +53,12 @@ class MatchingFramesDownloader:
             #remove first frame because generally black
             df_matches = df_matches[df_matches.trailer_fns != 0]
             df_matches = df_matches.reset_index()
+
+            yield movie_name, df_matches
+
+    def download_matching_frames(self):
+
+        for movie_name, df_matches in self.get_matching_frames():
 
             #self.__download_matching_pairs__(df_matches, movie_name)
             self.__download_video_matches__(df_matches, movie_name)
